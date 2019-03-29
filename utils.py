@@ -37,3 +37,15 @@ def from_pickle(path): # load something
     with open(path, 'rb') as handle:
         thing = pickle.load(handle)
     return thing
+
+def choose_nonlinearity(name):
+  if name == 'tanh':
+    return torch.tanh
+  elif name == 'relu':
+    return torch.relu
+  elif name == 'sigmoid':
+    return torch.sigmoid
+  elif name == 'softplus':
+    return torch.nn.functional.softplus
+  else:
+    raise ValueError("nonlinearity not recognized")

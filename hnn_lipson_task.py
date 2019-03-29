@@ -14,6 +14,7 @@ def get_args():
     parser.add_argument('--input_dim', default=2, type=int, help='dimensionality of input tensor')
     parser.add_argument('--hidden_dim', default=256, type=int, help='hidden dimension of mlp')
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
+    parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
     parser.add_argument('--total_steps', default=2000, type=int, help='number of gradient steps')
     parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
     parser.add_argument('--name', default='real', type=str, help='either "real" or "sim" data')
@@ -30,10 +31,10 @@ def train(args):
 
   # init model and optimizer
   if args.baseline:
-    nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim)
+    nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim, nonlinearity=args.nonlinearity)
     model = Baseline(args.input_dim, baseline_model=nn_model)
   else:
-    nn_model = MLP(args.input_dim, args.hidden_dim, 2)
+    nn_model = MLP(args.input_dim, args.hidden_dim, 2, nonlinearity=args.nonlinearity)
     model = HNN(args.input_dim, differentiable_model=nn_model)
 
   optim = torch.optim.Adam(model.parameters(), args.learn_rate)
