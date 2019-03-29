@@ -1,9 +1,7 @@
 # Sam Greydanus, Misko Dzama, Jason Yosinski
 # 2019 | Google AI Residency Project "Hamiltonian Neural Networks"
 
-import os
-import pickle
-import zipfile
+import os, torch, pickle, zipfile
 import numpy as np
 
 def L2_loss(u, v):
