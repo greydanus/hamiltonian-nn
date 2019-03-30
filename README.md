@@ -5,13 +5,13 @@ Sam Greydanus, Misko Dzamba, Jason Yosinski | 2019
 Usage
 --------
 
-Experiments
+Run experiments
  * To train a Hamiltonian Neural Network (HNN):
  	* Lipson data (simulated pendulum) `python3 hnn_lipson_task.py --name sim`
  	* Lipson data (real pendulum) `python3 hnn_pixel_task.py --name real`
  	* OpenAI Gym observations (pixel data) `python3 hnn_pixel_task.py`
 
-Analysis
+Run analysis
  * Coming soon...
 
 Summary
