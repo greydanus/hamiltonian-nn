@@ -55,4 +55,4 @@ Dependencies
 
 Known issues
 --------
- * None so far
+ * None so far \m/
