@@ -47,7 +47,6 @@ The HNN recipe
 
 Dependencies
 --------
-_(Use `pip freeze` to check your environment settings)_
  * OpenAI Gym
  * PyTorch
  * NumPy
