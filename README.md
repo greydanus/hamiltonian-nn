@@ -1,4 +1,4 @@
-Hamiltonian Neural Nets for fun and profit.
+Hamiltonian Neural Nets
 =======
 Sam Greydanus, Misko Dzamba, Jason Yosinski | 2019
 
