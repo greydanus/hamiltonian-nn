@@ -50,7 +50,7 @@ def choose_nonlinearity(name):
   else:
     raise ValueError("nonlinearity not recognized")
 
-def make_gif(frames, save_dir, name='pendulum', duration=1e-1):
+def make_gif(frames, save_dir, name='pendulum', duration=1e-1, pixels=None):
     '''Given a three dimensional array [frames, height, width], make
     a gif and save it.'''
     temp_dir = './_temp'
@@ -59,6 +59,8 @@ def make_gif(frames, save_dir, name='pendulum', duration=1e-1):
         im = (frames[i].clip(-.5,.5) + .5)*255
         im[0,:] = 0
         im[1,:] = 255
+        if pixels is not None:
+          im = scipy.misc.imresize(im, pixels)
         scipy.misc.imsave(temp_dir + '/f_{:04d}.png'.format(i), im)
 
     images = []
