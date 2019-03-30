@@ -9,4 +9,5 @@
 .pytest_cache
 *.tar
 *.zip
+*.pkl
 __pycache__
