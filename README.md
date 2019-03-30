@@ -27,7 +27,7 @@ The HNN recipe
 
 1. Make a dataset of pixel-space observations of a physical system where energy is conserved. Here we're working with a pendulum.
 
-![pendulum.gif.png](figures/_pendulum.gif.png)
+![pendulum.gif.png](figures/pendulum.gif.png)
 
 2. Train an autoencoder on the dataset. This autoencoder is a but unusual - its latent representation gets fed to the HNN, which tries to model the system's dynamics in latent space.
 
@@ -43,6 +43,17 @@ The HNN recipe
 
 5. After integrating in latent space, we can project back into pixel space to simulate the dynamics of the system.
 
-![hnn_integrated_pixel.gif.png](figures/_hnn_integrated_pixel.gif.png)
+![hnn_integrated_pixel.gif.png](figures/hnn_integrated_pixel.gif.png)
 
-6. Profit :)
+Dependencies
+--------
+_(Use `pip freeze` to check your environment settings)_
+ * OpenAI Gym
+ * PyTorch
+ * NumPy
+ * ImageIO
+ * Scipy
+
+Known issues
+--------
+ * None so far
