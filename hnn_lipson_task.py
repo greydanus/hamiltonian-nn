@@ -5,7 +5,7 @@ import torch, argparse, os
 import numpy as np
 
 from nn_models import MLP
-from hnn import HNN, Baseline
+from hnn import HNN, HNNBaseline
 from lipson_dataloader import get_dataset
 from utils import L2_loss
 
@@ -32,7 +32,7 @@ def train(args):
   # init model and optimizer
   if args.baseline:
     nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim, nonlinearity=args.nonlinearity)
-    model = Baseline(args.input_dim, baseline_model=nn_model)
+    model = HNNBaseline(args.input_dim, baseline_model=nn_model)
   else:
     nn_model = MLP(args.input_dim, args.hidden_dim, 2, nonlinearity=args.nonlinearity)
     model = HNN(args.input_dim, differentiable_model=nn_model)

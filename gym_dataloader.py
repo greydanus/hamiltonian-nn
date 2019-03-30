@@ -2,6 +2,10 @@
 # Sam Greydanus, Misko Dzamba, Jason Yosinski
 
 import numpy as np
+import gym
+import scipy, scipy.misc
+
+from utils import to_pickle, from_pickle
 
 def get_theta(obs):
     '''Transforms coordinate basis from the defaults of the gym pendulum env.'''
@@ -12,7 +16,7 @@ def get_theta(obs):
     return theta
 
 def preproc(X, side):
-  '''Crops, downsamples, desaturates, etc. the rgb pendulum observation.'''
+    '''Crops, downsamples, desaturates, etc. the rgb pendulum observation.'''
     X = X[...,0][240:-120,120:-120] - X[...,1][240:-120,120:-120]
     return scipy.misc.imresize(X, [int(side/2), side]) / 255.
 
@@ -53,7 +57,7 @@ def sample_gym(seed=0, timesteps=103, trials=20, side=28, max_angle=np.pi/6,
     frames = np.stack(frames).reshape(trials*timesteps, -1)
     return canonical_coords, frames, gym_settings
 
-def make_pixel_dataset(**kwargs):
+def make_gym_dataset(**kwargs):
     '''Constructs a dataset of observations from an OpenAI Gym env'''
     canonical_coords, frames, gym_settings = sample_gym(**kwargs)
     
@@ -91,6 +95,8 @@ def make_pixel_dataset(**kwargs):
             'pixels': pixels, 'dpixels': dpixels, 
             'next_pixels': next_pixels, 'next_dpixels': next_dpixels}
     data = {k: np.concatenate(v) for k, v in data.items()}
+
+    gym_settings['timesteps'] -= 3 # from all the offsets computed above
     data['meta'] = gym_settings
 
     return data
@@ -104,14 +110,14 @@ def get_dataset(experiment_name, save_dir, **kwargs):
   else:
     assert experiment_name in ['pendulum']
 
-  path = '{}/pixel-{}-dataset.pkl'.format(save_dir, experiment_name)
+  path = '{}/{}-pixel-dataset.pkl'.format(save_dir, experiment_name)
 
   try:
       data = from_pickle(path)
       print("Successfully loaded data from {}".format(path))
   except:
       print("Had a problem loading data from {}. Rebuilding dataset...".format(path))
-      data = make_pixel_pendulum_dataset(verbose=True)
+      data = make_gym_dataset(**kwargs)
       to_pickle(data, path)
 
   return data

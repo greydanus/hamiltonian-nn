@@ -4,6 +4,8 @@
 import torch
 import numpy as np
 
+from nn_models import MLP
+
 class HNN(torch.nn.Module):
     '''Learn arbitrary vector fields that are sums of conservative and solenoidal fields'''
     def __init__(self, input_dim, differentiable_model, field_type='solenoidal'):
@@ -51,14 +53,43 @@ class HNN(torch.nn.Module):
                 M[i,j] *= -1
         return M
 
-class Baseline(torch.nn.Module):
+
+class HNNBaseline(torch.nn.Module):
     '''Wraps a baseline model so that it has the same basic API'''
     def __init__(self, input_dim, baseline_model):
-        super(Baseline, self).__init__()
+        super(HNNBaseline, self).__init__()
         self.baseline_model = baseline_model
 
     def forward(self, x):
         return self.baseline_model(x)
 
-    def time_derivative(self, x):
+    def time_derivative(self, x, separate_fields=None):
         return self.forward(x)
+
+
+class PixelHNN(torch.nn.Module):
+    def __init__(self, input_dim, hidden_dim, autoencoder,
+                 field_type='solenoidal', nonlinearity='tanh', baseline=False):
+        super(PixelHNN, self).__init__()
+        self.autoencoder = autoencoder
+
+        if baseline:
+            nn_model = MLP(input_dim, hidden_dim, input_dim, nonlinearity)
+            self.hnn = HNNBaseline(input_dim, baseline_model=nn_model)
+        else:
+            nn_model = MLP(input_dim, hidden_dim, 2, nonlinearity)
+            self.hnn = HNN(input_dim, differentiable_model=nn_model, field_type=field_type)
+
+    def encode(self, x):
+        return self.autoencoder.encode(x)
+
+    def decode(self, z):
+        return self.autoencoder.decode(z)
+
+    def time_derivative(self, z, separate_fields=False):
+        return self.hnn.time_derivative(z, separate_fields)
+
+    def forward(self, x):
+        z = self.encode(x)
+        z_next = z + self.time_derivative(z)
+        return self.decode(z_next)

@@ -1,8 +1,10 @@
 # Sam Greydanus, Misko Dzama, Jason Yosinski
 # 2019 | Google AI Residency Project "Hamiltonian Neural Networks"
 
-import os, torch, pickle, zipfile
 import numpy as np
+import os, torch, pickle, zipfile
+import imageio, shutil
+import scipy, scipy.misc
 
 def L2_loss(u, v):
   return (u-v).pow(2).mean()
@@ -47,3 +49,27 @@ def choose_nonlinearity(name):
     return torch.nn.functional.softplus
   else:
     raise ValueError("nonlinearity not recognized")
+
+def make_gif(frames, save_dir, name='pendulum', duration=1e-1):
+    '''Given a three dimensional array [frames, height, width], make
+    a gif and save it.'''
+    temp_dir = './_temp'
+    os.mkdir(temp_dir) if not os.path.exists(temp_dir) else None
+    for i in range(len(frames)):
+        im = (frames[i].clip(-.5,.5) + .5)*255
+        im[0,:] = 0
+        im[1,:] = 255
+        scipy.misc.imsave(temp_dir + '/f_{:04d}.png'.format(i), im)
+
+    images = []
+    for file_name in sorted(os.listdir(temp_dir)):
+        if file_name.endswith('.png'):
+            file_path = os.path.join(temp_dir, file_name)
+            images.append(imageio.imread(file_path))
+    save_path = '{}/{}.gif'.format(save_dir, name)
+    png_save_path = '{}.png'.format(save_path)
+    imageio.mimsave(save_path, images, duration=duration)
+    os.rename(save_path, png_save_path)
+
+    shutil.rmtree(temp_dir) # remove all the images
+    return png_save_path
