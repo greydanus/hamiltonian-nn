@@ -32,7 +32,7 @@ The HNN recipe
 
 ![pendulum-dataset.gif.png](static/pendulum-dataset.gif.png)
 
-2. Train an autoencoder on the dataset. This autoencoder is a but unusual - its latent representation gets fed to the HNN, which tries to model the system's dynamics in latent space.
+2. Train an autoencoder on the dataset. The autoencoder is a bit unusual: its latent representation gets fed to the HNN, which tries to model the system's dynamics in latent space.
 
 ![autoencoder-hnn.png](static/autoencoder-hnn.png)
 
@@ -40,11 +40,11 @@ The HNN recipe
 
 ![latents-hnn.png](static/latents-hnn.png)
 
-4. [Phase space plots](https://en.wikiversity.org/wiki/Advanced_Classical_Mechanics/Phase_Space) are a common way to visualize Hamiltonians. We can make a phase space plot in the autoencoder's latent space. We can also integrate along the energy contours of phase space to predict the dynamics of a system (in the figure below, we intentionally "add energy" halfway through).
+4. [Phase space plots](https://en.wikiversity.org/wiki/Advanced_Classical_Mechanics/Phase_Space) are a common way to visualize Hamiltonians. We can make a phase space plot in the autoencoder's latent space. We can also integrate along the energy contours of phase space to predict the dynamics of the system (in the figure below, we intentionally "add energy" halfway through).
 
 ![integrate-latent-hnn.png](static/integrate-latent-hnn.png)
 
-5. After integrating in latent space, we can project back into pixel space to simulate the dynamics of the system.
+5. After integrating in latent space, we can project back into pixel space to simulate the dynamics of the system. Notice that the system gets a bump in energy halfway through.
 
 ![pendulum-sim-hnn.gif.png](static/pendulum-sim-hnn.gif.png)
 
