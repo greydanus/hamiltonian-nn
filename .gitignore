@@ -6,6 +6,7 @@
 
 .ipnyb_checkpoints
 **/*.ipnyb_checkpoints/
+./experiment_pixels
 
 .pytest_cache
 *.tar
