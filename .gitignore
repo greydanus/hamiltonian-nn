@@ -5,7 +5,10 @@
 *.egg-info
 .ipnyb_checkpoints/*
 .ipnyb_checkpoints
-*.ipnyb_checkpoints
+*/.ipnyb_checkpoints
+*/.ipnyb_checkpoints/*
+experiment_lipson/*.ipnyb_checkpoints
+experiment_lipson/.ipnyb_checkpoints/*
 .pytest_cache
 *.tar
 *.zip
