@@ -4,7 +4,17 @@ Sam Greydanus, Misko Dzamba, Jason Yosinski | 2019
 
 ![toy.png](static/toy.png)
 
-Usage
+Contribution and workflow
+--------
+_We'll remove this section when we open-source_
+ * Each experiment gets its own folder, labeled `experiment-{name}/`. All experiment-specific data, training code, saved logging info, etc goes in that folder.
+ * Any code that is shared across more than one experiment goes in the top level directory. Examples include `utils.py`, `nn_model.py` and the HNN base file, `hnn.py`
+ * I'm doing all analysis and plotting in Jupyter notebooks. I'm open to other suggestions. In general, all analysis notebooks go in the top-level directory and get named `analysis-{name}.ipnyb`.
+ * The `figures` directory is where you write any figures, movies, gifs, etc.
+ * The `static` directory is where you _manually_ move figures, GIFs, etc. once you are happy with them. This prevents you from accidentally overwriting them.
+ * Put high-res (300dpi) PDFs in `static/pdfs`. Most conferences require these settings for paper figures.
+
+Basic usage
 --------
 
 To train a Hamiltonian Neural Network (HNN):
