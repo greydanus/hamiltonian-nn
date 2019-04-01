@@ -6,14 +6,15 @@ import numpy as np
 
 from nn_models import MLP
 from hnn import HNN, HNNBaseline
-from lipson_dataloader import get_dataset
+from data_lipson import get_dataset
 from utils import L2_loss
 
 def get_args():
     parser = argparse.ArgumentParser(description=None)
     parser.add_argument('--input_dim', default=2, type=int, help='dimensionality of input tensor')
-    parser.add_argument('--hidden_dim', default=256, type=int, help='hidden dimension of mlp')
+    parser.add_argument('--hidden_dim', default=200, type=int, help='hidden dimension of mlp')
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
+    parser.add_argument('--input_noise', default=0.25, type=int, help='std of noise added to HNN inputs')
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
     parser.add_argument('--total_steps', default=2000, type=int, help='number of gradient steps')
     parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
@@ -30,6 +31,7 @@ def train(args):
   np.random.seed(args.seed)
 
   # init model and optimizer
+  print("Training baseline model:" if args.baseline else "Training HNN model:")
   if args.baseline:
     nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim, nonlinearity=args.nonlinearity)
     model = HNNBaseline(args.input_dim, baseline_model=nn_model)
@@ -51,7 +53,8 @@ def train(args):
   # vanilla train loop
   for step in range(args.total_steps+1):
 
-    dxdt_hat = model.time_derivative(x)
+    noise = args.input_noise * torch.randn(*x.shape)
+    dxdt_hat = model.time_derivative(x + noise)
     loss = L2_loss(dxdt, dxdt_hat)
     loss.backward() ; optim.step() ; optim.zero_grad()
 

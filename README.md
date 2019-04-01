@@ -2,6 +2,8 @@ Hamiltonian Neural Nets
 =======
 Sam Greydanus, Misko Dzamba, Jason Yosinski | 2019
 
+![toy.png](static/toy.png)
+
 Usage
 --------
 
@@ -27,23 +29,23 @@ The HNN recipe
 
 1. Make a dataset of pixel-space observations of a physical system where energy is conserved. Here we're working with a pendulum.
 
-![pendulum.gif.png](figures/pendulum.gif.png)
+![pendulum-dataset.gif.png](static/pendulum-dataset.gif.png)
 
 2. Train an autoencoder on the dataset. This autoencoder is a but unusual - its latent representation gets fed to the HNN, which tries to model the system's dynamics in latent space.
 
-![autoencoder.png](figures/autoencoder.png)
+![autoencoder-hnn.png](static/autoencoder-hnn.png)
 
 3. Since the HNN uses the latent representation to model dynamics, we can think of the latent factors as being analogous to canonical coordinates (e.g. position and velocity).
 
-![latents.png](figures/latents.png)
+![latents-hnn.png](static/latents-hnn.png)
 
 4. [Phase space plots](https://en.wikiversity.org/wiki/Advanced_Classical_Mechanics/Phase_Space) are a common way to visualize Hamiltonians. We can make a phase space plot in the autoencoder's latent space. We can also integrate along the energy contours of phase space to predict the dynamics of a system (in the figure below, we intentionally "add energy" halfway through).
 
-![hnn_integration_latent.png](figures/hnn_integration_latent.png)
+![integrate-latent-hnn.png](static/integrate-latent-hnn.png)
 
 5. After integrating in latent space, we can project back into pixel space to simulate the dynamics of the system.
 
-![hnn_integrated_pixel.gif.png](figures/hnn_integrated_pixel.gif.png)
+![pendulum-sim-hnn.gif.png](static/pendulum-sim-hnn.gif.png)
 
 Dependencies
 --------

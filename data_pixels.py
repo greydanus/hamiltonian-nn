@@ -17,7 +17,7 @@ def get_theta(obs):
 
 def preproc(X, side):
     '''Crops, downsamples, desaturates, etc. the rgb pendulum observation.'''
-    X = X[...,0][240:-120,120:-120] - X[...,1][240:-120,120:-120]
+    X = X[...,0][440:-220,180:-180] - X[...,1][440:-220,180:-180]
     return scipy.misc.imresize(X, [int(side/2), side]) / 255.
 
 def sample_gym(seed=0, timesteps=103, trials=20, side=28, max_angle=np.pi/6,
@@ -110,7 +110,7 @@ def get_dataset(experiment_name, save_dir, **kwargs):
   else:
     assert experiment_name in ['pendulum']
 
-  path = '{}/{}-pixel-dataset.pkl'.format(save_dir, experiment_name)
+  path = '{}/{}-pixels-dataset.pkl'.format(save_dir, experiment_name)
 
   try:
       data = from_pickle(path)

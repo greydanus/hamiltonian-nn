@@ -10,4 +10,5 @@
 *.tar
 *.zip
 *.pkl
+figures/
 __pycache__

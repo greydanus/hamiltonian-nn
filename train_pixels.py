@@ -6,7 +6,7 @@ import numpy as np
 
 from nn_models import MLPAutoencoder, MLP
 from hnn import HNN, HNNBaseline, PixelHNN
-from gym_dataloader import get_dataset
+from data_pixels import get_dataset
 from utils import L2_loss
 
 def get_args():
@@ -15,6 +15,7 @@ def get_args():
     parser.add_argument('--hidden_dim', default=200, type=int, help='hidden dimension of mlp')
     parser.add_argument('--latent_dim', default=2, type=int, help='latent dimension of autoencoder')
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
+    parser.add_argument('--input_noise', default=0.0, type=int, help='std of noise added to HNN inputs')
     parser.add_argument('--batch_size', default=200, type=int, help='batch size')
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
     parser.add_argument('--total_steps', default=3000, type=int, help='number of gradient steps')
@@ -37,6 +38,7 @@ def train(args):
   model = PixelHNN(args.latent_dim, args.hidden_dim,
                    autoencoder=autoencoder, nonlinearity=args.nonlinearity,
                    baseline=args.baseline)
+  print("Training baseline model:" if args.baseline else "Training HNN model:")
   optim = torch.optim.Adam(model.parameters(), args.learn_rate)
 
   # get dataset
@@ -62,7 +64,8 @@ def train(args):
     ae_loss = L2_loss(x, x_hat)
 
     # hnn vector field loss
-    z_hat_next = z + model.time_derivative(z)
+    noise = args.input_noise * torch.randn(*z.shape)
+    z_hat_next = z + model.time_derivative(z + noise)
     hnn_loss = L2_loss(z_next, z_hat_next)
 
     # canonical coordinate loss
@@ -87,5 +90,5 @@ if __name__ == "__main__":
     # save
     os.makedirs(args.save_dir) if not os.path.exists(args.save_dir) else None
     label = 'baseline' if args.baseline else 'hnn'
-    path = '{}/{}-pixel-{}.tar'.format(args.save_dir, args.name, label)
+    path = '{}/{}-pixels-{}.tar'.format(args.save_dir, args.name, label)
     torch.save(model.state_dict(), path)
