@@ -3,14 +3,10 @@
 
 .DS_Store
 *.egg-info
-
+.ipnyb_checkpoints/*
 .ipnyb_checkpoints
-**/*.ipnyb_checkpoints/
-./experiment_pixels
-
 .pytest_cache
 *.tar
 *.zip
 *.pkl
-figures/
 __pycache__
