@@ -3,7 +3,6 @@
 
 .DS_Store
 *.egg-info
-*.ipynb
 .ipnyb_checkpoints/*
 .ipnyb_checkpoints
 .pytest_cache

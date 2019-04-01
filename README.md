@@ -8,14 +8,14 @@ Usage
 --------
 
 To train a Hamiltonian Neural Network (HNN):
- * Toy task (circular vector field + noise): `python3 train_toy.py`
- * Lipson data (simulated/real pendulum data): `python3 train_lipson.py --name {sim,real}`
- * Pixel observations (from OpenAI Gym): `python3 train_pixels.py`
+ * Toy task (circular vector field + noise): `python3 experiment_toy/train.py`
+ * Lipson data (simulated/real pendulum data): `python3 experiment_lipson/train.py`
+ * Pixel observations (from OpenAI Gym): `python3 experiment_pixels/train.py`
 
 To analyze results
- * Toy task: `python3 analyze_toy.py`
- * Lipson data: (coming soon)
- * Pixel observations: run the `analyze-pixels.ipnyb` notebook
+ * Toy task: `analyze-toy.ipnyb`
+ * Lipson data: `analyze-toy.ipnyb`
+ * Pixel observations: `analyze-pixels.ipnyb`
 
 Summary
 --------
