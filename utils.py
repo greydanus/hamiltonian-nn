@@ -55,16 +55,20 @@ def from_pickle(path): # load something
 
 
 def choose_nonlinearity(name):
+  nl = None
   if name == 'tanh':
-    return torch.tanh
+    nl = torch.tanh
   elif name == 'relu':
-    return torch.relu
+    nl = torch.relu
   elif name == 'sigmoid':
-    return torch.sigmoid
+    nl = torch.sigmoid
   elif name == 'softplus':
-    return torch.nn.functional.softplus
+    nl = torch.nn.functional.softplus
+  elif name == 'selu':
+    nl = torch.nn.functional.selu
   else:
     raise ValueError("nonlinearity not recognized")
+  return nl
 
 
 def make_gif(frames, save_dir, name='pendulum', duration=1e-1, pixels=None):

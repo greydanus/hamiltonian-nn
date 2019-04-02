@@ -24,6 +24,7 @@ def get_args():
     parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
     parser.add_argument('--name', default='toy', type=str, help='only one option right now')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
+    parser.add_argument('--verbose', dest='verbose', action='store_true', help='verbose?')
     parser.add_argument('--seed', default=0, type=int, help='random seed')
     parser.add_argument('--save_dir', default='.', type=str, help='name of dataset')
     parser.set_defaults(feature=True)
@@ -35,7 +36,8 @@ def train(args):
   np.random.seed(args.seed)
 
   # init model and optimizer
-  print("Training baseline model:" if args.baseline else "Training HNN model:")
+  if args.verbose:
+    print("Training baseline model:" if args.baseline else "Training HNN model:")
   if args.baseline:
     nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim, nonlinearity=args.nonlinearity)
     model = HNNBaseline(args.input_dim, baseline_model=nn_model)
@@ -46,12 +48,15 @@ def train(args):
   optim = torch.optim.Adam(model.parameters(), args.learn_rate)
 
   # arrange data
-  data = get_dataset()
+  data, val_data = get_dataset(seed=args.seed), get_dataset(seed=args.seed+1)
   x = torch.tensor( data['x'], requires_grad=True, dtype=torch.float32)
   dxdt = torch.Tensor(data['dx'])
+  
+  val_x = torch.tensor( val_data['x'], requires_grad=True, dtype=torch.float32)
+  val_dxdt = torch.Tensor(val_data['dx'])
 
   # vanilla train loop
-  stats = {'train_loss': []}
+  stats = {'train_loss': [], 'val_loss': []}
   for step in range(args.total_steps+1):
     
     noise = args.input_noise * torch.randn(*x.shape)
@@ -59,9 +64,13 @@ def train(args):
     loss = L2_loss(dxdt, dxdt_hat)
     loss.backward() ; optim.step() ; optim.zero_grad()
     
+    # validation stats
+    val_dxdt_hat = model.time_derivative(val_x + noise)
+    val_loss = L2_loss(val_dxdt, val_dxdt_hat)
     stats['train_loss'].append(loss.item())
-    if step % args.print_every == 0:
-      print("step {}, loss {:.4e}".format(step, loss.item()))
+    stats['val_loss'].append(val_loss.item())
+    if args.verbose and step % args.print_every == 0:
+      print("step {}, train_loss {:.4e}, val_loss {:.4e}".format(step, loss.item(), val_loss.item()))
 
   return model, stats
 

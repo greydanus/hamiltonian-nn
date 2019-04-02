@@ -3,8 +3,8 @@
 
 .DS_Store
 *.egg-info
-.ipnyb_checkpoints/*
-.ipnyb_checkpoints
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
 .pytest_cache
 *.tar
 *.zip

@@ -18,7 +18,7 @@ def get_args():
     parser.add_argument('--input_dim', default=2, type=int, help='dimensionality of input tensor')
     parser.add_argument('--hidden_dim', default=200, type=int, help='hidden dimension of mlp')
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
-    parser.add_argument('--input_noise', default=0.25, type=int, help='std of noise added to HNN inputs')
+    parser.add_argument('--input_noise', default=0.0, type=int, help='std of noise added to HNN inputs')
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
     parser.add_argument('--total_steps', default=2000, type=int, help='number of gradient steps')
     parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
@@ -55,6 +55,7 @@ def train(args):
   dxdt = torch.Tensor(delta_x)
 
   # vanilla train loop
+  stats = {'train_loss': []}
   for step in range(args.total_steps+1):
 
     noise = args.input_noise * torch.randn(*x.shape)
@@ -62,14 +63,15 @@ def train(args):
     loss = L2_loss(dxdt, dxdt_hat)
     loss.backward() ; optim.step() ; optim.zero_grad()
 
+    stats['train_loss'].append(loss.item())
     if step % args.print_every == 0:
       print("step {}, loss {:.4e}".format(step, loss.item()))
 
-  return model
+  return model, stats
 
 if __name__ == "__main__":
     args = get_args()
-    model = train(args)
+    model, stats = train(args)
 
     # save
     os.makedirs(args.save_dir) if not os.path.exists(args.save_dir) else None

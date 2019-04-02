@@ -7,7 +7,7 @@ def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=
   data = {'meta': locals()}
 
   # random sample
-  np.random.seed(0)
+  np.random.seed(seed)
   a = np.random.rand(samples)*(ymax-ymin) + ymin
   b = np.random.rand(samples)*(xmax-xmin) + xmin
   da = -b + noise_std * np.random.randn(samples)
