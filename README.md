@@ -35,8 +35,6 @@ Summary
 
 Modeling the conserved quantities of a physical system is one gateway to understanding its dynamics. Physicists use a mathematical object called the Hamiltonian to do this. They often use domain knowledge and trickery to write down the proper Hamiltonian, but here we take a different approach: we parameterize it with a differentiable model and then attempt to learn it directly from real-world data.
 
-![pendulum-compare-labeled.gif](static/pendulum-compare-labeled.gif)
-
 The HNN recipe
 --------
 
