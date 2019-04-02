@@ -30,7 +30,7 @@ def preproc(X, side):
 #     X = X[...,0][440:-220,180:-180] - X[...,1][440:-220,180:-180]
 #     return scipy.misc.imresize(X, [int(side/2), side]) / 255.
 
-def sample_gym(seed=0, timesteps=103, trials=20, side=28, max_angle=np.pi/6,
+def sample_gym(seed=0, timesteps=103, trials=20, side=28, min_angle=0., max_angle=np.pi/6, 
               verbose=False, env_name='Pendulum-v0'):
     assert env_name == 'Pendulum-v0', "The only env currently supported is 'Pendulum-v0'"
 
@@ -44,15 +44,15 @@ def sample_gym(seed=0, timesteps=103, trials=20, side=28, max_angle=np.pi/6,
     for step in range(trials*timesteps):
 
         if step % timesteps == 0:
-            small_angle = False
+            angle_ok = False
 
-            while not small_angle:
+            while not angle_ok:
                 obs = env.reset()
                 theta_init = np.abs(get_theta(obs))
                 if verbose:
                     print("\tCalled reset. Max angle= {:.3f}".format(theta_init))
-                if theta_init < max_angle:
-                    small_angle = True
+                if theta_init > min_angle and theta_init < max_angle:
+                    angle_ok = True
                   
             if verbose:
                 print("\tRunning environment...")

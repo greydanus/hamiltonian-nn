@@ -35,6 +35,8 @@ Summary
 
 Modeling the conserved quantities of a physical system is one gateway to understanding its dynamics. Physicists use a mathematical object called the Hamiltonian to do this. They often use domain knowledge and trickery to write down the proper Hamiltonian, but here we take a different approach: we parameterize it with a differentiable model and then attempt to learn it directly from real-world data.
 
+![pendulum-compare-labeled.gif](static/pendulum-compare-labeled.gif)
+
 The HNN recipe
 --------
 
@@ -54,9 +56,13 @@ The HNN recipe
 
 ![integrate-latent-hnn.png](static/integrate-latent-hnn.png)
 
-5. After integrating in latent space, we can project back into pixel space to simulate the dynamics of the system. Notice that the system gets a bump in energy halfway through.
+5. After integrating in latent space, we can project back into pixel space to simulate the dynamics of the system.
 
-![pendulum-sim-hnn.gif.png](static/pendulum-sim-hnn.gif.png)
+![pendulum-compare-labeled.gif](static/pendulum-compare-labeled.gif)
+
+Here's what it looks like when we add energy halfway through the simulation:
+
+![pendulum-compare-labeled.gif](static/pendulum-addenergy-labeled.gif)
 
 Dependencies
 --------

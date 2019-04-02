@@ -71,15 +71,15 @@ def choose_nonlinearity(name):
   return nl
 
 
-def make_gif(frames, save_dir, name='pendulum', duration=1e-1, pixels=None):
+def make_gif(frames, save_dir, name='pendulum', duration=1e-1, pixels=None, divider=0):
     '''Given a three dimensional array [frames, height, width], make
     a gif and save it.'''
     temp_dir = './_temp'
     os.mkdir(temp_dir) if not os.path.exists(temp_dir) else None
     for i in range(len(frames)):
         im = (frames[i].clip(-.5,.5) + .5)*255
-        im[0,:] = 0
-        im[1,:] = 255
+        im[divider,:] = 0
+        im[divider + 1,:] = 255
         if pixels is not None:
           im = scipy.misc.imresize(im, pixels)
         scipy.misc.imsave(temp_dir + '/f_{:04d}.png'.format(i), im)
