@@ -32,7 +32,6 @@ def preproc(X, side):
 
 def sample_gym(seed=0, timesteps=103, trials=20, side=28, min_angle=0., max_angle=np.pi/6, 
               verbose=False, env_name='Pendulum-v0'):
-    assert env_name == 'Pendulum-v0', "The only env currently supported is 'Pendulum-v0'"
 
     gym_settings = locals()
     if verbose:
@@ -117,6 +116,8 @@ def get_dataset(experiment_name, save_dir, **kwargs):
   
   if experiment_name == "pendulum":
     env_name = "Pendulum-v0"
+  elif experiment_name == "acrobot":
+    env_name = "Acrobot-v1"
   else:
     assert experiment_name in ['pendulum']
 

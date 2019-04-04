@@ -43,7 +43,7 @@ def train(args):
     nn_model = MLP(args.input_dim, args.hidden_dim, 2, nonlinearity=args.nonlinearity)
     model = HNN(args.input_dim, differentiable_model=nn_model)
 
-  optim = torch.optim.Adam(model.parameters(), args.learn_rate)
+  optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-4)
 
   # arrange data
   data, names = get_dataset(args.name, args.save_dir)

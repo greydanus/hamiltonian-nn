@@ -43,7 +43,7 @@ def train(args):
                    autoencoder=autoencoder, nonlinearity=args.nonlinearity,
                    baseline=args.baseline)
   print("Training baseline model:" if args.baseline else "Training HNN model:")
-  optim = torch.optim.Adam(model.parameters(), args.learn_rate)
+  optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-4)
 
   # get dataset
   data = get_dataset(args.name, args.save_dir, verbose=True, seed=args.seed)
@@ -69,7 +69,7 @@ def train(args):
 
     # hnn vector field loss
     noise = args.input_noise * torch.randn(*z.shape)
-    z_hat_next = z + model.time_derivative(z + noise)
+    z_hat_next = z + model.time_derivative(z + noise) # replace with rk4
     hnn_loss = L2_loss(z_next, z_hat_next)
 
     # canonical coordinate loss

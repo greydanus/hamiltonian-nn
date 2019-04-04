@@ -3,7 +3,7 @@
 
 import numpy as np
 
-def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=200):
+def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.35, samples=200):
   data = {'meta': locals()}
 
   # random sample
