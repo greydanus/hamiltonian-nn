@@ -5,7 +5,7 @@ import torch
 import numpy as np
 
 from nn_models import MLP
-from utils import rk4
+from utils import rk4,rk4_integrate
 
 class HNN(torch.nn.Module):
     '''Learn arbitrary vector fields that are sums of conservative and solenoidal fields'''
@@ -23,6 +23,9 @@ class HNN(torch.nn.Module):
 
     def rk4_time_derivative(self, x):
         return rk4(fun=self.time_derivative, y0=x, t=0, dt=1)
+    
+    def rk4_time_integral(self,x):
+        return rk4_integrate(fun=self.time_derivative, x=x, t0=0, step_size=0.25, integration_time=1)
 
     def time_derivative(self, x, t=None, separate_fields=False):
         '''THIS IS WHERE THE MAGIC HAPPENS'''
@@ -95,6 +98,9 @@ class PixelHNN(torch.nn.Module):
 
     def time_derivative(self, z, separate_fields=False):
         return self.hnn.time_derivative(z, separate_fields)
+    
+    def rk4_time_integral(self,x):
+        return rk4_integrate(fun=self.time_derivative, x=x, t0=0, step_size=0.25, integration_time=1)
 
     def forward(self, x):
         z = self.encode(x)

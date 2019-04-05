@@ -18,6 +18,12 @@ def integrate_model(model, t_span, y0, fun=None, **kwargs):
   return solve_ivp(fun=fun, t_span=t_span, y0=y0, **kwargs)
 
 
+def rk4_integrate(fun, x, t0, step_size, integration_time, *args, **kwargs):
+  steps=int(np.ceil(integration_time/step_size))
+  for step in range(steps):
+    x=x+rk4(fun,x,t0+step*step_size,step_size,*args,**kwargs)
+  return x
+
 def rk4(fun, y0, t, dt, *args, **kwargs):
   dt2 = dt / 2.0
   k1 = fun(y0, t, *args, **kwargs)

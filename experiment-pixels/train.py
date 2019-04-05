@@ -26,6 +26,7 @@ def get_args():
     parser.add_argument('--print_every', default=250, type=int, help='number of gradient steps between prints')
     parser.add_argument('--name', default='pendulum', type=str, help='either "real" or "sim" data')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
+    parser.add_argument('--use_rk4', dest='use_rk4', action='store_true', help='integrate derivative with RK4')
     parser.add_argument('--seed', default=0, type=int, help='random seed')
     parser.add_argument('--save_dir', default='.', type=str, help='name of dataset')
     parser.set_defaults(feature=True)
@@ -69,7 +70,7 @@ def train(args):
 
     # hnn vector field loss
     noise = args.input_noise * torch.randn(*z.shape)
-    z_hat_next = z + model.time_derivative(z + noise) # replace with rk4
+    z_hat_next = model.rk4_time_integral(z) if args.use_rk4 else z + model.time_derivative(z + noise) 
     hnn_loss = L2_loss(z_next, z_hat_next)
 
     # canonical coordinate loss
@@ -94,5 +95,6 @@ if __name__ == "__main__":
     # save
     os.makedirs(args.save_dir) if not os.path.exists(args.save_dir) else None
     label = 'baseline' if args.baseline else 'hnn'
+    label = '-rk4' + label if args.use_rk4 else label
     path = '{}/{}-pixels-{}.tar'.format(args.save_dir, args.name, label)
     torch.save(model.state_dict(), path)
