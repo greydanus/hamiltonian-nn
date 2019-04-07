@@ -5,11 +5,12 @@ import torch, argparse
 import numpy as np
 
 import os, sys
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(parent_dir)
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(PARENT_DIR)
 
 from nn_models import MLP
-from hnn import HNN, HNNBaseline
+from hnn import HNN
 from data import get_dataset
 from utils import L2_loss, rk4
 
@@ -26,8 +27,9 @@ def get_args():
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
     parser.add_argument('--use_rk4', dest='use_rk4', action='store_true', help='integrate derivative with RK4')
     parser.add_argument('--verbose', dest='verbose', action='store_true', help='verbose?')
+    parser.add_argument('--field_type', default='solenoidal', type=str, help='type of vector field to learn')
     parser.add_argument('--seed', default=0, type=int, help='random seed')
-    parser.add_argument('--save_dir', default='.', type=str, help='name of dataset')
+    parser.add_argument('--save_dir', default=THIS_DIR, type=str, help='where to save the trained model')
     parser.set_defaults(feature=True)
     return parser.parse_args()
 
@@ -39,13 +41,11 @@ def train(args):
   # init model and optimizer
   if args.verbose:
     print("Training baseline model:" if args.baseline else "Training HNN model:")
-  if args.baseline:
-    nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim, nonlinearity=args.nonlinearity)
-    model = HNNBaseline(args.input_dim, baseline_model=nn_model)
-  else:
-    nn_model = MLP(args.input_dim, args.hidden_dim, 2, nonlinearity=args.nonlinearity)
-    model = HNN(args.input_dim, differentiable_model=nn_model, field_type='solenoidal')
 
+  output_dim = args.input_dim if args.baseline else 2
+  nn_model = MLP(args.input_dim, args.hidden_dim, output_dim, args.nonlinearity)
+  model = HNN(args.input_dim, differentiable_model=nn_model,
+              field_type=args.field_type, baseline=args.baseline)
   optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-4)
 
   # arrange data

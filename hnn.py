@@ -9,23 +9,31 @@ from utils import rk4
 
 class HNN(torch.nn.Module):
     '''Learn arbitrary vector fields that are sums of conservative and solenoidal fields'''
-    def __init__(self, input_dim, differentiable_model, field_type='solenoidal'):
+    def __init__(self, input_dim, differentiable_model, field_type='solenoidal', baseline=False):
         super(HNN, self).__init__()
+        self.baseline = baseline
         self.differentiable_model = differentiable_model
         self.M = self.permutation_tensor(input_dim) # Levi-Civita permutation tensor
         self.field_type = field_type
 
     def forward(self, x):
         # traditional forward pass
+        if self.baseline:
+            return self.differentiable_model(x)
+
         y = self.differentiable_model(x)
         assert y.dim() == 2 and y.shape[1] == 2, "Output tensor should have shape [batch_size, 2]"
         return y.split(1,1)
 
-    def rk4_time_derivative(self, x):
-        return rk4(fun=self.time_derivative, y0=x, t=0, dt=1)
+    def rk4_time_derivative(self, x, dt=1):
+        return rk4(fun=self.time_derivative, y0=x, t=0, dt=dt)
 
     def time_derivative(self, x, t=None, separate_fields=False):
-        '''THIS IS WHERE THE MAGIC HAPPENS'''
+        '''NEURAL ODE-STLE VECTOR FIELD'''
+        if self.baseline:
+            return self.differentiable_model(x)
+
+        '''NEURAL HAMILTONIAN-STLE VECTOR FIELD'''
         F1, F2 = self.forward(x) # traditional forward pass
 
         conservative_field = torch.zeros_like(x) # start out with both components set to 0
@@ -58,34 +66,16 @@ class HNN(torch.nn.Module):
         return M
 
 
-class HNNBaseline(torch.nn.Module):
-    '''Wraps a baseline model so that it has the same basic API'''
-    def __init__(self, input_dim, baseline_model):
-        super(HNNBaseline, self).__init__()
-        self.baseline_model = baseline_model
-
-    def forward(self, x):
-        return self.baseline_model(x)
-
-    def rk4_time_derivative(self, x):
-        return rk4(fun=self.time_derivative, y0=x, t=0, dt=1)
-
-    def time_derivative(self, x, t=None, separate_fields=None):
-        return self.forward(x)
-
-
 class PixelHNN(torch.nn.Module):
     def __init__(self, input_dim, hidden_dim, autoencoder,
                  field_type='solenoidal', nonlinearity='tanh', baseline=False):
         super(PixelHNN, self).__init__()
         self.autoencoder = autoencoder
+        self.baseline = baseline
 
-        if baseline:
-            nn_model = MLP(input_dim, hidden_dim, input_dim, nonlinearity)
-            self.hnn = HNNBaseline(input_dim, baseline_model=nn_model)
-        else:
-            nn_model = MLP(input_dim, hidden_dim, 2, nonlinearity)
-            self.hnn = HNN(input_dim, differentiable_model=nn_model, field_type=field_type)
+        output_dim = input_dim if baseline else 2
+        nn_model = MLP(input_dim, hidden_dim, input_dim, nonlinearity)
+        self.hnn = HNN(input_dim, differentiable_model=nn_model, field_type=field_type, baseline=baseline)
 
     def encode(self, x):
         return self.autoencoder.encode(x)

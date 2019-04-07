@@ -5,11 +5,12 @@ import torch, argparse
 import numpy as np
 
 import os, sys
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(parent_dir)
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(PARENT_DIR)
 
 from nn_models import MLPAutoencoder, MLP
-from hnn import HNN, HNNBaseline, PixelHNN
+from hnn import HNN, PixelHNN
 from data import get_dataset
 from utils import L2_loss
 
@@ -24,10 +25,11 @@ def get_args():
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
     parser.add_argument('--total_steps', default=3000, type=int, help='number of gradient steps')
     parser.add_argument('--print_every', default=250, type=int, help='number of gradient steps between prints')
+    parser.add_argument('--verbose', dest='verbose', action='store_true', help='verbose?')
     parser.add_argument('--name', default='pendulum', type=str, help='either "real" or "sim" data')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
     parser.add_argument('--seed', default=0, type=int, help='random seed')
-    parser.add_argument('--save_dir', default='.', type=str, help='name of dataset')
+    parser.add_argument('--save_dir', default=THIS_DIR, type=str, help='where to save the trained model')
     parser.set_defaults(feature=True)
     return parser.parse_args()
 
@@ -42,8 +44,9 @@ def train(args):
   model = PixelHNN(args.latent_dim, args.hidden_dim,
                    autoencoder=autoencoder, nonlinearity=args.nonlinearity,
                    baseline=args.baseline)
-  print("Training baseline model:" if args.baseline else "Training HNN model:")
-  optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-4)
+  if args.verbose:
+    print("Training baseline model:" if args.baseline else "Training HNN model:")
+  optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-6)
 
   # get dataset
   data = get_dataset(args.name, args.save_dir, verbose=True, seed=args.seed)
@@ -82,7 +85,7 @@ def train(args):
     loss = cc_loss + ae_loss + 1e-2 * hnn_loss
     loss.backward() ; optim.step() ; optim.zero_grad()
 
-    if step % 250 == 0:
+    if args.verbose and step % 250 == 0:
       print("step {}, loss {:.4e}".format(step, loss.item()))
 
   return model

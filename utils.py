@@ -76,6 +76,10 @@ def choose_nonlinearity(name):
     nl = torch.nn.functional.softplus
   elif name == 'selu':
     nl = torch.nn.functional.selu
+  elif name == 'elu':
+    nl = torch.nn.functional.elu
+  elif name == 'swish':
+    nl = lambda x: x * torch.sigmoid(x)
   else:
     raise ValueError("nonlinearity not recognized")
   return nl

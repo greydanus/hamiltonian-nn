@@ -19,18 +19,18 @@ def get_theta(obs):
     theta = theta - 2*np.pi if theta > np.pi else theta
     return theta
     
-def preproc(X, side):
-    '''Crops, downsamples, desaturates, etc. the rgb pendulum observation.'''
-    X = X[...,0][240:-120,120:-120] - X[...,1][240:-120,120:-120]
-    return scipy.misc.imresize(X, [int(side/2), side]) / 255.
-
-
 # def preproc(X, side):
 #     '''Crops, downsamples, desaturates, etc. the rgb pendulum observation.'''
-#     X = X[...,0][440:-220,180:-180] - X[...,1][440:-220,180:-180]
+#     X = X[...,0][240:-120,120:-120] - X[...,1][240:-120,120:-120]
 #     return scipy.misc.imresize(X, [int(side/2), side]) / 255.
 
-def sample_gym(seed=0, timesteps=103, trials=20, side=28, min_angle=0., max_angle=np.pi/6, 
+
+def preproc(X, side):
+    '''Crops, downsamples, desaturates, etc. the rgb pendulum observation.'''
+    X = X[...,0][440:-220,180:-180] - X[...,1][440:-220,180:-180]
+    return scipy.misc.imresize(X, [int(side/2), side]) / 255.
+
+def sample_gym(seed=0, timesteps=103, trials=100, side=28, min_angle=0., max_angle=np.pi/6, 
               verbose=False, env_name='Pendulum-v0'):
 
     gym_settings = locals()
