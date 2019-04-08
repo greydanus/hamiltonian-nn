@@ -38,11 +38,20 @@ Modeling the conserved quantities of a physical system is one gateway to underst
 Stats
 --------
 
-| Task          | Test loss (baseline) 		| Test loss (HNN) 			| Energy MSE (baseline) 	| Energy MSE (HNN) 		 |
-| ------------- | :-----------------------: | :-------------------:		| :-------------------:		| :-------------------:	 |
-| Toy 			|  1.17e+00 +/- 1e-01    	| **7.68e-01 +/- 3e-01** 	| 4.38e+00 +/- 1			| **4.70e-03 +/- 9e-04** |
-| Pend-Sim 		|   **1.83e-03**    		| 1.35e-02 		  			| 8.67e-01					| **1.20e-01** 			 |
-| Pend-Real		|   **1.45e-03**   			| 5.75e-03 		  			| 7.83e-02					| **2.34e-03**			 |
+<!--
+| Task          | Test loss (baseline) 	| Test loss (HNN) 	| Energy MSE (baseline) | Energy MSE (HNN) 	|
+| ------------- | :-------------------: | :---------------: | :-------------------:	| :---------------:	|
+| Toy 			|  	1.17    	  		| **7.68e-1** 		| 4.38					| **4.70e-3** 		|
+| Pend-Sim 		|   **1.83e-3**  		| 1.35e-2 			| 8.67e-1				| **1.20e-1** 		|
+| Pend-Real		|   **1.45e-3**   		| 5.75e-3 		 	| 7.83e-2				| **2.34e-3**		|
+-->
+
+|               | Test loss			 	| 				 	| Energy MSE 			| 					|
+|               | Baseline NN 			| Hamiltonian NN 	| Baseline NN 			| Hamiltonian NN
+| ------------- | :-------------------: | :---------------: | :-------------------:	| :---------------:	|
+| Toy 			|  	1.1674    	  		| **0.7676** 		| 4.3797				| **0.0047** 		|
+| Pend-Sim 		|   **0.0018**  		| 0.0135 			| 0.8670				| **0.1200** 		|
+| Pend-Real		|   **0.0014**   		| 0.0058 		 	| 0.0783				| **0.0023**		|
 
 The HNN recipe
 --------
