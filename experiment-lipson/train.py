@@ -24,7 +24,7 @@ def get_args():
     parser.add_argument('--total_steps', default=2000, type=int, help='number of gradient steps')
     parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
     parser.add_argument('--verbose', dest='verbose', action='store_true', help='verbose?')
-    parser.add_argument('--name', default='real', type=str, help='either "real" or "sim" data')
+    parser.add_argument('--name', default='pend-real', type=str, help='[pend-real, pend-sim]')
     parser.add_argument('--field_type', default='solenoidal', type=str, help='type of vector field to learn')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
     parser.add_argument('--seed', default=0, type=int, help='random seed')
@@ -44,29 +44,35 @@ def train(args):
   nn_model = MLP(args.input_dim, args.hidden_dim, output_dim, args.nonlinearity)
   model = HNN(args.input_dim, differentiable_model=nn_model,
               field_type=args.field_type, baseline=args.baseline)
-  optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-4)
+  optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-5)
 
   # arrange data
-  data, names = get_dataset(args.name, args.save_dir)
-  np_x, np_t = data[:,2:4], data[:,1:2]
-  delta_x = (np_x[1:] - np_x[:-1]) / (np_t[1:] - np_t[:-1])
-  np_x= np_x[:-1]
-  
-  x = torch.tensor( np_x, requires_grad=True, dtype=torch.float32)
-  dxdt = torch.Tensor(delta_x)
+  data = get_dataset(args.name, args.save_dir)
+  x = torch.tensor( data['x'], requires_grad=True, dtype=torch.float32)
+  test_x = torch.tensor( data['test_x'], requires_grad=True, dtype=torch.float32)
+  dxdt = torch.Tensor(data['dx'])
+  test_dxdt = torch.Tensor(data['test_dx'])
 
   # vanilla train loop
-  stats = {'train_loss': []}
+  stats = {'train_loss': [], 'test_loss': []}
   for step in range(args.total_steps+1):
 
+    # train step
     noise = args.input_noise * torch.randn(*x.shape)
     dxdt_hat = model.time_derivative(x + noise)
     loss = L2_loss(dxdt, dxdt_hat)
     loss.backward() ; optim.step() ; optim.zero_grad()
 
+    # run validation
+    noise = args.input_noise * torch.randn(*test_x.shape)
+    test_dxdt_hat = model.time_derivative(test_x + noise)
+    test_loss = L2_loss(test_dxdt, test_dxdt_hat)
+
+    # logging
     stats['train_loss'].append(loss.item())
+    stats['test_loss'].append(test_loss.item())
     if args.verbose and step % args.print_every == 0:
-      print("step {}, loss {:.4e}".format(step, loss.item()))
+      print("step {}, train_loss {:.4e}, test_loss {:.4e}".format(step, loss.item(), test_loss.item()))
 
   return model, stats
 
@@ -77,5 +83,5 @@ if __name__ == "__main__":
     # save
     os.makedirs(args.save_dir) if not os.path.exists(args.save_dir) else None
     label = 'baseline' if args.baseline else 'hnn'
-    path = '{}/pendulum-{}-{}.tar'.format(args.save_dir, args.name, label)
+    path = '{}/{}-{}.tar'.format(args.save_dir, args.name, label)
     torch.save(model.state_dict(), path)

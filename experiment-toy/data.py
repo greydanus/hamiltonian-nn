@@ -3,18 +3,30 @@
 
 import numpy as np
 
-def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.35, samples=200):
+def circular_vector_field(t, x):
+  dx = np.fliplr(x.copy().reshape(-1,2))
+  dx[:,0] *= -1
+  return dx.copy().reshape(*x.shape)
+
+def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=0, samples=400, test_split=0.5):
   data = {'meta': locals()}
 
-  # random sample
+  # randomly sample inputs
   np.random.seed(seed)
   a = np.random.rand(samples)*(ymax-ymin) + ymin
   b = np.random.rand(samples)*(xmax-xmin) + xmin
-  da = -b + noise_std * np.random.randn(samples)
-  db = a + noise_std * np.random.randn(samples)
   
+  # make vector field
   data['x'] = np.stack( [a, b]).T
-  data['dx'] = np.stack( [da, db]).T
+  data['dx'] = circular_vector_field(t=None, x=data['x'])
+  data['dx'] += noise_std * np.random.randn(*data['x'].shape)
+
+  # make a train/test split
+  split_ix = int(len(data['x']) * test_split)
+  split_data = {}
+  for k in ['x', 'dx']:
+      split_data[k], split_data['test_' + k] = data[k][:split_ix], data[k][split_ix:]
+  data = split_data
   return data
 
 def get_field(xmin=-2, xmax=2, ymin=-2, ymax=2, gridsize=20):

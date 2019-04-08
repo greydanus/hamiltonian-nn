@@ -19,9 +19,9 @@ def get_args():
     parser.add_argument('--input_dim', default=2, type=int, help='dimensionality of input tensor')
     parser.add_argument('--hidden_dim', default=200, type=int, help='hidden dimension of mlp')
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
-    parser.add_argument('--input_noise', default=0.5, type=int, help='std of noise added to inputs')
+    parser.add_argument('--input_noise', default=0.25, type=int, help='std of noise added to inputs')
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
-    parser.add_argument('--total_steps', default=1000, type=int, help='number of gradient steps')
+    parser.add_argument('--total_steps', default=3000, type=int, help='number of gradient steps')
     parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
     parser.add_argument('--name', default='toy', type=str, help='only one option right now')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
@@ -49,30 +49,32 @@ def train(args):
   optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-4)
 
   # arrange data
-  data, val_data = get_dataset(seed=args.seed), get_dataset(seed=args.seed+1)
+  data = get_dataset(seed=args.seed)
   x = torch.tensor( data['x'], requires_grad=True, dtype=torch.float32)
+  test_x = torch.tensor( data['test_x'], requires_grad=True, dtype=torch.float32)
   dxdt = torch.Tensor(data['dx'])
-  
-  val_x = torch.tensor( val_data['x'], requires_grad=True, dtype=torch.float32)
-  val_dxdt = torch.Tensor(val_data['dx'])
+  test_dxdt = torch.Tensor(data['test_dx'])
 
   # vanilla train loop
-  stats = {'train_loss': [], 'val_loss': []}
+  stats = {'train_loss': [], 'test_loss': []}
   for step in range(args.total_steps+1):
     
-
+    # train step
     dxdt_hat = model.rk4_time_derivative(x) if args.use_rk4 else model.time_derivative(x)
     dxdt_hat += args.input_noise * torch.randn(*x.shape) # add noise, maybe
     loss = L2_loss(dxdt, dxdt_hat)
     loss.backward() ; optim.step() ; optim.zero_grad()
     
-    # validation stats
-    val_dxdt_hat = model.rk4_time_derivative(x) if args.use_rk4 else model.time_derivative(x)
-    val_loss = L2_loss(val_dxdt, val_dxdt_hat)
+    # run test data
+    test_dxdt_hat = model.rk4_time_derivative(test_x) if args.use_rk4 else model.time_derivative(test_x)
+    test_dxdt_hat += args.input_noise * torch.randn(*test_x.shape) # add noise, maybe
+    test_loss = L2_loss(test_dxdt, test_dxdt_hat)
+
+    # logging
     stats['train_loss'].append(loss.item())
-    stats['val_loss'].append(val_loss.item())
+    stats['test_loss'].append(test_loss.item())
     if args.verbose and step % args.print_every == 0:
-      print("step {}, train_loss {:.4e}, val_loss {:.4e}".format(step, loss.item(), val_loss.item()))
+      print("step {}, train_loss {:.4e}, test_loss {:.4e}".format(step, loss.item(), test_loss.item()))
 
   return model, stats
 

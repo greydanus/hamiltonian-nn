@@ -62,27 +62,36 @@ def train(args):
     x = inputs[ixs]
     x_next = inputs_next[ixs]
 
-    # encode pixel space -> latent dimension
-    z = model.encode(x)
-    z_next = model.encode(x_next)
+    # # encode pixel space -> latent dimension
+    # z = model.encode(x)
+    # z_next = model.encode(x_next)
 
-    # autoencoder loss
+    # # autoencoder loss
+    # x_hat = model.decode(z)
+    # ae_loss = L2_loss(x, x_hat)
+
+    # # hnn vector field loss
+    # noise = args.input_noise * torch.randn(*z.shape)
+    # z_hat_next = z + model.time_derivative(z + noise) # replace with rk4
+    # hnn_loss = L2_loss(z_next, z_hat_next)
+
+    # # canonical coordinate loss
+    # # -> makes latent space look like (x, v) coordinates
+    # w, dw = z.split(1,1)
+    # w_next, _ = z_next.split(1,1)
+    # cc_loss = L2_loss(dw, w_next - w)
+
+    ##### ONE LOSS TO RULE THEM ALL #####
+    z = model.encode(x)
     x_hat = model.decode(z)
     ae_loss = L2_loss(x, x_hat)
 
-    # hnn vector field loss
-    noise = args.input_noise * torch.randn(*z.shape)
-    z_hat_next = z + model.time_derivative(z + noise) # replace with rk4
-    hnn_loss = L2_loss(z_next, z_hat_next)
-
-    # canonical coordinate loss
-    # -> makes latent space look like (x, v) coordinates
-    w, dw = z.split(1,1)
-    w_next, _ = z_next.split(1,1)
-    cc_loss = L2_loss(dw, w_next - w)
+    z_hat_next = z + model.time_derivative(z)
+    x_hat_next = model.decode(z_hat_next)
+    ae_loss_next = L2_loss(x_next, x_hat_next)
 
     # sum losses and take a gradient step
-    loss = cc_loss + ae_loss + 1e-1 * hnn_loss
+    loss = ae_loss + ae_loss_next #+ cc_loss + 
     loss.backward() ; optim.step() ; optim.zero_grad()
 
     if args.verbose and step % 250 == 0:

@@ -35,6 +35,15 @@ Summary
 
 Modeling the conserved quantities of a physical system is one gateway to understanding its dynamics. Physicists use a mathematical object called the Hamiltonian to do this. They often use domain knowledge and trickery to write down the proper Hamiltonian, but here we take a different approach: we parameterize it with a differentiable model and then attempt to learn it directly from real-world data.
 
+Stats
+--------
+
+| Task          | Test loss (baseline) 		| Test loss (HNN) 			| Energy MSE (baseline) 	| Energy MSE (HNN) 		 |
+| ------------- | :-----------------------: | :-------------------:		| :-------------------:		| :-------------------:	 |
+| Toy 			|  1.17e+00 +/- 1e-01    	| **7.68e-01 +/- 3e-01** 	| 4.38e+00 +/- 1			| **4.70e-03 +/- 9e-04** |
+| Pend-Sim 		|   **1.83e-03**    		| 1.35e-02 		  			| 8.67e-01					| **1.20e-01** 			 |
+| Pend-Real		|   **1.45e-03**   			| 5.75e-03 		  			| 7.83e-02					| **2.34e-03**			 |
+
 The HNN recipe
 --------
 
