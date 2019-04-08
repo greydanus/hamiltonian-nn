@@ -36,6 +36,7 @@ Summary
 Modeling the conserved quantities of a physical system is one gateway to understanding its dynamics. Physicists use a mathematical object called the Hamiltonian to do this. They often use domain knowledge and trickery to write down the proper Hamiltonian, but here we take a different approach: we parameterize it with a differentiable model and then attempt to learn it directly from real-world data.
 
 ### Test loss
+The L2 loss between the true vector field and learned vector field over a set of test points.
 |               | Baseline NN 			| Hamiltonian NN 	|
 | ------------- | :-------------------: | :---------------: |
 | Toy 			|  	1.1674    	  		| **0.7676** 		|
@@ -43,6 +44,7 @@ Modeling the conserved quantities of a physical system is one gateway to underst
 | Pend-Real		|   **0.0014**   		| 0.0058 		 	|
 
 ### Energy MSE
+Starting from point x0, use RK4 to integrate forward through time and compute the energy of each point along the trajectory. Then measure the L2 distance from the true energies of the true trajectory out of x0.
 |               | Baseline NN 			| Hamiltonian 		|
 | ------------- | :-------------------:	| :---------------:	|
 | Toy 			| 4.3797				| **0.0047** 		|
