@@ -7,21 +7,26 @@ from utils import choose_nonlinearity
 
 class MLP(torch.nn.Module):
   '''Just a salt-of-the-earth MLP'''
-  def __init__(self, input_dim, hidden_dim, output_dim, nonlinearity='tanh'):
+  def __init__(self, input_dim, hidden_dim, output_dim, nonlinearity='tanh', middle_layers=1):
     super(MLP, self).__init__()
-    self.linear1 = torch.nn.Linear(input_dim, hidden_dim)
-    self.linear2 = torch.nn.Linear(hidden_dim, hidden_dim)
-    self.linear3 = torch.nn.Linear(hidden_dim, output_dim)
+    self.layers = [torch.nn.Linear(input_dim, hidden_dim)]
+    for idx in range(middle_layers):
+        self.layers.append(torch.nn.Linear(hidden_dim, hidden_dim))
+    self.layers.append(torch.nn.Linear(hidden_dim, output_dim))
 
-    for l in [self.linear1, self.linear2, self.linear3]:
+    for l in self.layers:
       torch.nn.init.orthogonal_(l.weight) # use a principled initialization
 
     self.nonlinearity = choose_nonlinearity(nonlinearity)
+    self.model = torch.nn.Sequential(*self.layers)
 
   def forward(self, x, separate_fields=False):
-    h = self.nonlinearity( self.linear1(x) )
-    h = self.nonlinearity( self.linear2(h) )
-    return self.linear3(h)
+    h = x 
+    for idx in range(len(self.layers)):
+      h = self.layers[idx](h)
+      if idx!=len(self.layers): # no activations on last layer
+        h = self.nonlinearity(h)
+    return h
 
 class MLPAutoencoder(torch.nn.Module):
   '''A salt-of-the-earth MLP Autoencoder + some edgy res connections'''

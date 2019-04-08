@@ -35,9 +35,11 @@ def custom_init(): # each body has state: [mass, px, py, vx, vy]
     bodies[2,:] = np.asarray([3, 0.1, 0.3, 0.1,  -0.3])
     return bodies
 
-def custom_init_2d(): # each body has state: [mass, px, py, vx, vy]
+def custom_init_2d(same_mass=False): # each body has state: [mass, px, py, vx, vy]
     bodies = np.zeros((2,5)) # three bodies with state info ~ [mass, px, py, vx, vy]
     m1,m2,vx,vy=np.random.rand(4)
+    if same_mass:
+        m2=m1
     vx/=2
     vy/=2
     bodies[0,:] = np.asarray([m1, 1, 0, vx, vy]) # body 1

@@ -42,8 +42,8 @@ def train(args):
     nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim, nonlinearity=args.nonlinearity)
     model = HNNBaseline(args.input_dim, baseline_model=nn_model)
   else:
-    nn_model = MLP(args.input_dim, args.hidden_dim, 2, nonlinearity=args.nonlinearity)
-    model = HNN(args.input_dim, differentiable_model=nn_model, field_type='solenoidal')
+    nn_model = MLP(args.input_dim, args.hidden_dim, 2, nonlinearity=args.nonlinearity,middle_layers=1)
+    model = HNN(args.input_dim, differentiable_model=nn_model, field_type='conservative') #field_type='solenoidal')
 
   optim = torch.optim.Adam(model.parameters(), args.learn_rate)
 
@@ -54,6 +54,7 @@ def train(args):
   
   val_x = torch.tensor( val_data['x'], requires_grad=True, dtype=torch.float32)
   val_dxdt = torch.Tensor(val_data['dx'])
+
   # vanilla train loop
   stats = {'train_loss': [], 'val_loss': []}
   for step in range(args.total_steps+1):
