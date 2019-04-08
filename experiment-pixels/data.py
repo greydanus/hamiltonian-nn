@@ -27,8 +27,8 @@ def get_theta(obs):
 
 def preproc(X, side):
     '''Crops, downsamples, desaturates, etc. the rgb pendulum observation.'''
-    X = X[...,0][440:-220,180:-180] - X[...,1][440:-220,180:-180]
-    return scipy.misc.imresize(X, [int(side/2), side]) / 255.
+    X = X[...,0][440:-220,330:-330] - X[...,1][440:-220,330:-330]
+    return scipy.misc.imresize(X, [int(side), side]) / 255.
 
 def sample_gym(seed=0, timesteps=103, trials=100, side=28, min_angle=0., max_angle=np.pi/6, 
               verbose=False, env_name='Pendulum-v0'):
@@ -81,11 +81,11 @@ def make_gym_dataset(**kwargs):
         dcc = cc[1:] - cc[:-1]
         cc = cc[1:]
 
-        # compute framediffs to get velocity information
-        # concatenate with orig frames for position information
+        # concat adjacent frames to get velocity information
         # now the pixel arrays have same information as canonical coords
         # ...but in a different (highly nonlinear) basis
-        p = np.concatenate([pix[1:], pix[1:] - pix[:-1]], axis=-1)
+        p = np.concatenate([pix[:-1], pix[1:]], axis=-1)
+        
         dp = p[1:] - p[:-1]
         p = p[1:]
 
