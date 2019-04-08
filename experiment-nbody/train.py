@@ -15,13 +15,13 @@ from utils import L2_loss
 
 def get_args():
     parser = argparse.ArgumentParser(description=None)
-    parser.add_argument('--input_dim', default=2, type=int, help='dimensionality of input tensor')
+    parser.add_argument('--input_dim', default=3*2, type=int, help='dimensionality of input tensor')
     parser.add_argument('--hidden_dim', default=200, type=int, help='hidden dimension of mlp')
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
     parser.add_argument('--input_noise', default=0.25, type=int, help='std of noise added to inputs')
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
     parser.add_argument('--total_steps', default=2000, type=int, help='number of gradient steps')
-    parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
+    parser.add_argument('--print_every', default=20, type=int, help='number of gradient steps between prints')
     parser.add_argument('--name', default='toy', type=str, help='only one option right now')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
     parser.add_argument('--verbose', dest='verbose', action='store_true', help='verbose?')
@@ -59,12 +59,12 @@ def train(args):
   for step in range(args.total_steps+1):
     
     noise = args.input_noise * torch.randn(*x.shape)
-    dxdt_hat = model.time_derivative(x + noise)
+    dxdt_hat = model.time_derivative(x + noise)[:,[1,2,4,5]]
     loss = L2_loss(dxdt, dxdt_hat)
     loss.backward() ; optim.step() ; optim.zero_grad()
     
     # validation stats
-    val_dxdt_hat = model.time_derivative(val_x + noise)
+    val_dxdt_hat = model.time_derivative(val_x + noise)[:,[1,2,4,5]]
     val_loss = L2_loss(val_dxdt, val_dxdt_hat)
     stats['train_loss'].append(loss.item())
     stats['val_loss'].append(val_loss.item())

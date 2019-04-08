@@ -11,7 +11,7 @@ def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=
   #generate some orbits for training / testing split
   orbits=[]
   T=100
-  t = np.linspace(0,T,500)
+  t = np.linspace(0,T,100)
   for idx in range(samples):
     #one for training
     state = custom_init_2d().flatten()
@@ -24,8 +24,8 @@ def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=
     orbits.append({'initial':state,'trajectory':trajectory,'forces':forces})
     
 
-  data['x']=np.vstack([ orbit['trajectory'] for orbit in orbits ])
-  data['dx']=np.vstack([ orbit['forces'] for orbit in orbits ])
+  data['x']=np.vstack([ orbit['trajectory'] for orbit in orbits ])[:,:,:3].reshape(-1,6)
+  data['dx']=np.vstack([ orbit['forces'] for orbit in orbits ]).reshape(-1,4)
   return data
 
 def get_field(xmin=-2, xmax=2, ymin=-2, ymax=2, gridsize=20):
