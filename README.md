@@ -36,7 +36,9 @@ Summary
 Modeling the conserved quantities of a physical system is one gateway to understanding its dynamics. Physicists use a mathematical object called the Hamiltonian to do this. They often use domain knowledge and trickery to write down the proper Hamiltonian, but here we take a different approach: we parameterize it with a differentiable model and then attempt to learn it directly from real-world data.
 
 ### Test loss
-The L2 loss between the true vector field and learned vector field over a set of test points.
+* Choose test data of the form `x=[x0, x1,...]` and `dx=[dx0, dx1,...]` where `dx` is the time derivative of `x`
+* Let `dx' = model.time_derivative(x)`
+* Compute L2 distance between `dx` and `dx'`
 
 |               | Baseline NN 			| Hamiltonian NN 	|
 | ------------- | :-------------------: | :---------------: |
@@ -45,7 +47,9 @@ The L2 loss between the true vector field and learned vector field over a set of
 | Pend-Real		|   **0.0014**   		| 0.0058 		 	|
 
 ### Energy MSE
-Starting from point x0, use RK4 to integrate forward through time and compute the energy of each point along the trajectory. Then measure the L2 distance from the true energies of the true trajectory out of x0.
+* Choose a trajectory `[x0, x1,...]` from test data
+* Use RK4 integration to estimate `[x0', x1',...]` using the model
+* Compute the L2 distance between `[energy(x0), energy(x1),...]` and `[energy(x0'), energy(x1'),...]`
 
 |               | Baseline NN 			| Hamiltonian 		|
 | ------------- | :-------------------:	| :---------------:	|
