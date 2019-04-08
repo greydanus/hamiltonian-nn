@@ -46,7 +46,8 @@ Stats
 | Pend-Real		|   **1.45e-3**   		| 5.75e-3 		 	| 7.83e-2				| **2.34e-3**		|
 -->
 
-|               | Baseline NN 			| Hamiltonian NN 	| Baseline NN 			| Hamiltonian NN
+|               | Test loss			 	| 				 	| Energy MSE 			| 					|
+|               | Baseline NN 			| Hamiltonian NN 	| Baseline NN 			| Hamiltonian 		|
 | ------------- | :-------------------: | :---------------: | :-------------------:	| :---------------:	|
 | Toy 			|  	1.1674    	  		| **0.7676** 		| 4.3797				| **0.0047** 		|
 | Pend-Sim 		|   **0.0018**  		| 0.0135 			| 0.8670				| **0.1200** 		|
