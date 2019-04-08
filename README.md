@@ -37,6 +37,7 @@ Modeling the conserved quantities of a physical system is one gateway to underst
 
 ### Test loss
 The L2 loss between the true vector field and learned vector field over a set of test points.
+
 |               | Baseline NN 			| Hamiltonian NN 	|
 | ------------- | :-------------------: | :---------------: |
 | Toy 			|  	1.1674    	  		| **0.7676** 		|
@@ -45,6 +46,7 @@ The L2 loss between the true vector field and learned vector field over a set of
 
 ### Energy MSE
 Starting from point x0, use RK4 to integrate forward through time and compute the energy of each point along the trajectory. Then measure the L2 distance from the true energies of the true trajectory out of x0.
+
 |               | Baseline NN 			| Hamiltonian 		|
 | ------------- | :-------------------:	| :---------------:	|
 | Toy 			| 4.3797				| **0.0047** 		|
