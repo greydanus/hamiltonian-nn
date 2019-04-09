@@ -30,7 +30,7 @@ def preproc(X, side):
     X = X[...,0][440:-220,330:-330] - X[...,1][440:-220,330:-330]
     return scipy.misc.imresize(X, [int(side), side]) / 255.
 
-def sample_gym(seed=0, timesteps=103, trials=100, side=28, min_angle=0., max_angle=np.pi/6, 
+def sample_gym(seed=0, timesteps=103, trials=200, side=28, min_angle=0., max_angle=np.pi/6, 
               verbose=False, env_name='Pendulum-v0'):
 
     gym_settings = locals()
@@ -60,13 +60,16 @@ def sample_gym(seed=0, timesteps=103, trials=100, side=28, min_angle=0., max_ang
         obs, _, _, _ = env.step([0.])
         theta, dtheta = get_theta(obs), obs[-1]
 
-        canonical_coords.append( np.array([theta, dtheta]) )
+        # The constant factor of 0.25 comes from saying plotting H = PE + KE*c
+        # and choosing c such that total energy is as close to constant as
+        # possible. It's not perfect, but the best we can do.
+        canonical_coords.append( np.array([theta, 0.25 * dtheta]) )
     
     canonical_coords = np.stack(canonical_coords).reshape(trials*timesteps, -1)
     frames = np.stack(frames).reshape(trials*timesteps, -1)
     return canonical_coords, frames, gym_settings
 
-def make_gym_dataset(**kwargs):
+def make_gym_dataset(test_split=0.2, **kwargs):
     '''Constructs a dataset of observations from an OpenAI Gym env'''
     canonical_coords, frames, gym_settings = sample_gym(**kwargs)
     
@@ -104,6 +107,13 @@ def make_gym_dataset(**kwargs):
             'pixels': pixels, 'dpixels': dpixels, 
             'next_pixels': next_pixels, 'next_dpixels': next_dpixels}
     data = {k: np.concatenate(v) for k, v in data.items()}
+
+    # make a train/test split
+    split_ix = int(data['coords'].shape[0]* test_split)
+    split_data = {}
+    for k, v in data.items():
+      split_data[k], split_data['test_' + k] = v[split_ix:], v[:split_ix]
+    data = split_data
 
     gym_settings['timesteps'] -= 3 # from all the offsets computed above
     data['meta'] = gym_settings

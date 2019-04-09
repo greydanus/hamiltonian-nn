@@ -23,8 +23,8 @@ def get_args():
     parser.add_argument('--input_noise', default=0.0, type=int, help='std of noise added to HNN inputs')
     parser.add_argument('--batch_size', default=200, type=int, help='batch size')
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
-    parser.add_argument('--total_steps', default=3000, type=int, help='number of gradient steps')
-    parser.add_argument('--print_every', default=250, type=int, help='number of gradient steps between prints')
+    parser.add_argument('--total_steps', default=6000, type=int, help='number of gradient steps')
+    parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
     parser.add_argument('--verbose', dest='verbose', action='store_true', help='verbose?')
     parser.add_argument('--name', default='pendulum', type=str, help='either "real" or "sim" data')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
@@ -32,6 +32,32 @@ def get_args():
     parser.add_argument('--save_dir', default=THIS_DIR, type=str, help='where to save the trained model')
     parser.set_defaults(feature=True)
     return parser.parse_args()
+
+'''The loss for this model is a bit complicated, so we'll
+    define it in a separate function for clarity.'''
+def pixelhnn_loss(x, x_next, model):
+  # encode pixel space -> latent dimension
+  z = model.encode(x)
+  z_next = model.encode(x_next)
+
+  # autoencoder loss
+  x_hat = model.decode(z)
+  ae_loss = L2_loss(x, x_hat)
+
+  # hnn vector field loss
+  noise = args.input_noise * torch.randn(*z.shape)
+  z_hat_next = z + model.time_derivative(z + noise) # replace with rk4
+  hnn_loss = L2_loss(z_next, z_hat_next)
+
+  # canonical coordinate loss
+  # -> makes latent space look like (x, v) coordinates
+  w, dw = z.split(1,1)
+  w_next, _ = z_next.split(1,1)
+  cc_loss = L2_loss(dw, w_next - w)
+
+  # sum losses and take a gradient step
+  loss = ae_loss + cc_loss + 1e-1 * hnn_loss
+  return loss
 
 def train(args):
   # set random seed
@@ -50,58 +76,38 @@ def train(args):
 
   # get dataset
   data = get_dataset(args.name, args.save_dir, verbose=True, seed=args.seed)
-  trials = data['meta']['trials']
-  timesteps = data['meta']['timesteps']
-  inputs = torch.tensor( data['pixels'], dtype=torch.float32)
-  inputs_next = torch.tensor( data['next_pixels'], dtype=torch.float32)
+
+  x = torch.tensor( data['pixels'], dtype=torch.float32)
+  test_x = torch.tensor( data['test_pixels'], dtype=torch.float32)
+  next_x = torch.tensor( data['next_pixels'], dtype=torch.float32)
+  test_next_x = torch.tensor( data['test_next_pixels'], dtype=torch.float32)
 
   # vanilla ae train loop
+  stats = {'train_loss': [], 'test_loss': []}
   for step in range(args.total_steps+1):
-    # select a batch
-    ixs = torch.randperm(trials*timesteps-2*trials)[:args.batch_size]
-    x = inputs[ixs]
-    x_next = inputs_next[ixs]
-
-    # # encode pixel space -> latent dimension
-    # z = model.encode(x)
-    # z_next = model.encode(x_next)
-
-    # # autoencoder loss
-    # x_hat = model.decode(z)
-    # ae_loss = L2_loss(x, x_hat)
-
-    # # hnn vector field loss
-    # noise = args.input_noise * torch.randn(*z.shape)
-    # z_hat_next = z + model.time_derivative(z + noise) # replace with rk4
-    # hnn_loss = L2_loss(z_next, z_hat_next)
-
-    # # canonical coordinate loss
-    # # -> makes latent space look like (x, v) coordinates
-    # w, dw = z.split(1,1)
-    # w_next, _ = z_next.split(1,1)
-    # cc_loss = L2_loss(dw, w_next - w)
-
-    ##### ONE LOSS TO RULE THEM ALL #####
-    z = model.encode(x)
-    x_hat = model.decode(z)
-    ae_loss = L2_loss(x, x_hat)
-
-    z_hat_next = z + model.time_derivative(z)
-    x_hat_next = model.decode(z_hat_next)
-    ae_loss_next = L2_loss(x_next, x_hat_next)
-
-    # sum losses and take a gradient step
-    loss = ae_loss + ae_loss_next #+ cc_loss + 
+    
+    # train step
+    ixs = torch.randperm(x.shape[0])[:args.batch_size]
+    loss = pixelhnn_loss(x[ixs], next_x[ixs], model)
     loss.backward() ; optim.step() ; optim.zero_grad()
 
-    if args.verbose and step % 250 == 0:
-      print("step {}, loss {:.4e}".format(step, loss.item()))
+    stats['train_loss'].append(loss.item())
+    if args.verbose and step % args.print_every == 0:
+      # run validation
+      test_ixs = torch.randperm(test_x.shape[0])[:args.batch_size]
+      test_loss = pixelhnn_loss(test_x[test_ixs], test_next_x[test_ixs], model)
+      stats['test_loss'].append(test_loss.item())
 
-  return model
+      print("step {}, train_loss {:.4e}, test_loss {:.4e}"
+        .format(step, loss.item(), test_loss.item()))
+
+  test_loss = pixelhnn_loss(test_x, test_next_x, model)
+  print('Final test loss {:.4e}'.format(test_loss.item()))
+  return model, stats
 
 if __name__ == "__main__":
     args = get_args()
-    model = train(args)
+    model, stats = train(args)
 
     # save
     os.makedirs(args.save_dir) if not os.path.exists(args.save_dir) else None
