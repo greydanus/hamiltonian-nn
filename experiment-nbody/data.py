@@ -13,7 +13,7 @@ def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=
   #generate some orbits for training / testing split
   orbits=[]
   T=20
-  n=500
+  n=50
   t = np.linspace(0,T,n)
   for idx in range(samples):
     state = custom_init_2d(same_mass=True).flatten()
@@ -22,14 +22,21 @@ def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=
     if n>1:
       solution = scipy.integrate.solve_ivp(update_fn, (0,T), state, t_eval=t, rtol=1e-14) # dense_output=True) #, t)
       trajectory = solution.y.T.reshape(solution.y.T.shape[0], -1, 5)
-    forces = []
+    dxs = []
     for instant in trajectory:
-      forces.append(get_accelerations(instant)[None,:,:])
-    forces=np.vstack(forces)
-    orbits.append({'initial':state,'trajectory':trajectory,'forces':forces})
+      accelerations=get_accelerations(instant) #[nbodies x  2 (a_x, a_y)]
+      #state = n x [mass, px, py, vx, vy]
+      #dx = n x [0, vx, vy, ax, ay]
+      dx = instant.copy()
+      dx[:,0]=0
+      dx[:,1:3]=dx[:,3:5]
+      dx[:,3:5]=accelerations
+      dxs.append(dx[None,:,:])
+    dxs=np.vstack(dxs)
+    orbits.append({'initial':state,'trajectory':trajectory,'dxs':dxs})
     
-  data['x']=np.vstack([ orbit['trajectory'] for orbit in orbits ])[:,:,:3].reshape(-1,6)
-  data['dx']=np.vstack([ orbit['forces'] for orbit in orbits ]).reshape(-1,4)
+  data['x']=np.vstack([ orbit['trajectory'].reshape(-1,10) for orbit in orbits ]) #[:,:,:3].reshape(-1,6)
+  data['dx']=np.vstack([ orbit['dxs'].reshape(-1,10) for orbit in orbits ]) #.reshape(-1,4)
  
   #try to normalize
   #data['x'][:,4:6]-=data['x'][:,1:3]

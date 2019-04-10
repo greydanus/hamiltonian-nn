@@ -39,9 +39,9 @@ def custom_init_2d(same_mass=False): # each body has state: [mass, px, py, vx, v
     bodies = np.zeros((2,5)) # three bodies with state info ~ [mass, px, py, vx, vy]
     m1,m2,vx,vy=np.random.rand(4)
     if same_mass:
-        m2=m1
-    vx/=2
-    vy/=2
+        m2=m1=0.2
+    vx=vx/4 #+0.25
+    vy=vy/4 #+0.25
     bodies[0,:] = np.asarray([m1, 1, 0, vx, vy]) # body 1
     bodies[1,:] = np.asarray([m2, -1, 0, -vx/(m2/m1), -vy/(m2/m1)]) # body 2
     kinetic_energy=(0.5*bodies[:,0]*(bodies[:,-2:]**2).sum(axis=0)).sum()

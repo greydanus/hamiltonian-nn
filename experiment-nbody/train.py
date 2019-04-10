@@ -13,9 +13,11 @@ from hnn import HNN, HNNBaseline
 from data import get_dataset
 from utils import L2_loss
 
+from torch.nn.utils import clip_grad_value_
+
 def get_args():
     parser = argparse.ArgumentParser(description=None)
-    parser.add_argument('--input_dim', default=3*2, type=int, help='dimensionality of input tensor')
+    parser.add_argument('--input_dim', default=10, type=int, help='dimensionality of input tensor')
     parser.add_argument('--hidden_dim', default=200, type=int, help='hidden dimension of mlp')
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
     parser.add_argument('--input_noise', default=0.25, type=int, help='std of noise added to inputs')
@@ -39,34 +41,42 @@ def train(args):
   if args.verbose:
     print("Training baseline model:" if args.baseline else "Training HNN model:")
   if args.baseline:
-    nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim, nonlinearity=args.nonlinearity)
+    nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim, nonlinearity=args.nonlinearity,middle_layers=8)
     model = HNNBaseline(args.input_dim, baseline_model=nn_model)
   else:
-    nn_model = MLP(args.input_dim, args.hidden_dim, 2, nonlinearity=args.nonlinearity,middle_layers=1)
-    model = HNN(args.input_dim, differentiable_model=nn_model, field_type='conservative') #field_type='solenoidal')
+    nn_model = MLP(args.input_dim, args.hidden_dim, 2, nonlinearity=args.nonlinearity,middle_layers=8)
+    #model = HNN(args.input_dim, differentiable_model=nn_model, field_type='conservative') #field_type='solenoidal')
+    model = HNN(args.input_dim, differentiable_model=nn_model, field_type='solenoidal')
 
   optim = torch.optim.Adam(model.parameters(), args.learn_rate)
+  #optim = torch.optim.SGD(model.parameters(), args.learn_rate, momentum=0.9)
 
   # arrange data
-  data, val_data = get_dataset(seed=args.seed), get_dataset(seed=args.seed+1)
+  data, val_data = get_dataset(seed=args.seed,plot="training_pngs"), get_dataset(seed=args.seed+1)
+
   x = torch.tensor( data['x'], requires_grad=True, dtype=torch.float32)
   dxdt = torch.Tensor(data['dx'])
+  print(x.shape,dxdt.shape)
   
   val_x = torch.tensor( val_data['x'], requires_grad=True, dtype=torch.float32)
   val_dxdt = torch.Tensor(val_data['dx'])
 
+  print(x.size(),val_x.size())
+
   # vanilla train loop
   stats = {'train_loss': [], 'val_loss': []}
   for step in range(args.total_steps+1):
-    
     noise = args.input_noise * torch.randn(*x.shape)
-    dxdt_hat = model.time_derivative(x + noise)[:,[1,2,4,5]]
+    dxdt_hat = model.time_derivative(x + noise)
     loss = L2_loss(dxdt, dxdt_hat)
-    loss.backward() ; optim.step() ; optim.zero_grad()
+    loss.backward() ;  optim.step() ; optim.zero_grad()
     
     # validation stats
-    val_dxdt_hat = model.time_derivative(val_x + noise)[:,[1,2,4,5]]
+    noise = args.input_noise * torch.randn(*val_x.shape)
+    val_dxdt_hat = model.time_derivative(val_x + noise)
     val_loss = L2_loss(val_dxdt, val_dxdt_hat)
+    val_sort = ((val_dxdt-val_dxdt_hat)**2).sum(dim=1)
+    #print(torch.cat([val_dxdt,val_dxdt_hat],dim=1)[val_sort.max(0)[1]])
     stats['train_loss'].append(loss.item())
     stats['val_loss'].append(val_loss.item())
     if args.verbose and step % args.print_every == 0:
