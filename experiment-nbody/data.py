@@ -1,42 +1,71 @@
 # Hamiltonian Neural Networks | 2019
 # Sam Greydanus, Misko Dzamba, Jason Yosinski
 
+import matplotlib.pyplot as plt
+import os
 import numpy as np
 import scipy.integrate
 from orbits import custom_init_2d,update_fn,get_accelerations
 
-def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=20):
+def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=100, plot=False):
   data = {'meta': locals()}
 
   #generate some orbits for training / testing split
   orbits=[]
-  T=100
-  t = np.linspace(0,T,100)
+  T=20
+  n=500
+  t = np.linspace(0,T,n)
   for idx in range(samples):
-    #one for training
     state = custom_init_2d(same_mass=True).flatten()
-    solution = scipy.integrate.solve_ivp(update_fn, (0,T), state, t_eval=t, rtol=1e-14) # dense_output=True) #, t)
-    trajectory = solution.y.T.reshape(solution.y.T.shape[0], -1, 5)
+    trajectory = state.reshape(1,2,5)
+    #trajectory = trajectory[1].reshape(1,2,5)
+    if n>1:
+      solution = scipy.integrate.solve_ivp(update_fn, (0,T), state, t_eval=t, rtol=1e-14) # dense_output=True) #, t)
+      trajectory = solution.y.T.reshape(solution.y.T.shape[0], -1, 5)
     forces = []
     for instant in trajectory:
       forces.append(get_accelerations(instant)[None,:,:])
     forces=np.vstack(forces)
     orbits.append({'initial':state,'trajectory':trajectory,'forces':forces})
     
-
   data['x']=np.vstack([ orbit['trajectory'] for orbit in orbits ])[:,:,:3].reshape(-1,6)
   data['dx']=np.vstack([ orbit['forces'] for orbit in orbits ]).reshape(-1,4)
  
   #try to normalize
   #data['x'][:,4:6]-=data['x'][:,1:3]
   #data['x'][:,1:3]=0
- 
+
   #shuffle data before returning
-  permutation = np.random.permutation(data['x'].shape[0])
-  data['x']=data['x'][permutation]
-  data['dx']=data['dx'][permutation]
-  
+  #permutation = np.random.permutation(data['x'].shape[0])
+  #data['x']=data['x'][permutation]
+  #data['dx']=data['dx'][permutation]
+
+  if plot and len(plot)>0:
+    #lets plot the orbits to this output folder
+    os.makedirs(plot, exist_ok=True)
+    for idx in range(len(orbits)):
+      orbit = orbits[idx]
+      plot_trajectory(orbit['trajectory'] , "%s/%d.png" % (plot,idx))
+
   return data
+
+
+def plot_trajectory(trajectory, output_file):
+  fig = plt.figure(figsize=[5,5], frameon=True, dpi=100)
+  
+  # draw trajectoryectories
+  plt.title('Trajectories')
+  colors = ['r', 'g', 'b']
+  for i in range(trajectory.shape[1]):
+      plt.plot(trajectory[:,i,1], trajectory[:,i,2], c=colors[i], label='body {} orbital'.format(i))
+      plt.plot(trajectory[-1,i,1], trajectory[-1,i,2], 'o', c=colors[i])
+  
+  ax = fig.gca()
+  ax.set_aspect(1)
+  plt.xlabel('$x$') ; plt.ylabel('$y$')
+  plt.legend(fontsize=6)
+  plt.savefig(output_file)
+  plt.close()
 
 def get_field(xmin=-2, xmax=2, ymin=-2, ymax=2, gridsize=20):
   field = {'meta': locals()}
