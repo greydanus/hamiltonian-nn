@@ -7,7 +7,45 @@ import numpy as np
 import scipy.integrate
 from orbits import custom_init_2d,update_fn,get_accelerations
 
-def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=100, plot=False):
+##### Sam's 2body init######
+def random_config(nbodies=2):
+  '''Dirt-simple initialization'''
+  state = np.random.randn(nbodies,5)
+  # orbits seem a bit more stable for a mass of 10:
+  state[:,0] = 10
+  # center around (0,0) and conserve momentum:
+  state[:,1:] -= state[:,1:].mean(0, keepdims=True)
+  return state
+
+def update(t, state):
+  state = state.reshape(-1,5) # [bodies, properties]
+  deriv = np.zeros_like(state)
+  deriv[:,1:3] = state[:,3:5] # dx, dy = vx, vy
+  deriv[:,3:5] = get_accelerations(state)
+  return deriv.reshape(-1)
+
+def get_batch(batch_size=5):
+  x, dx = [], []
+  for i in range(batch_size):
+    
+    acc_thresh = 3 # acceleration threshold
+    below_acc_thresh = False
+    while not below_acc_thresh:
+      state = random_config()
+      dstate = update(None, state) # get time derivatives of (px, py, vx, vy)
+      below_acc_thresh = np.abs(dstate[3:5]).max() < acc_thresh
+      
+    x.append(state.flatten())
+    dx.append(dstate)
+  return {'x': np.stack(x), 'dx': np.stack(dx) } # data point and vector field
+########
+
+def get_dataset(seed=0, samples=500, plot=False):
+   return get_batch(samples)
+  
+
+###### TRAJECTORY BASED DATA SET #######
+def get_dataset_orbits(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=500, plot=False):
   data = {'meta': locals()}
 
   #generate some orbits for training / testing split
@@ -55,7 +93,6 @@ def get_dataset(seed=0, xmin=-2, xmax=2, ymin=-2, ymax=2, noise_std=.5, samples=
       plot_trajectory(orbit['trajectory'] , "%s/%d.png" % (plot,idx))
 
   return data
-
 
 def plot_trajectory(trajectory, output_file):
   fig = plt.figure(figsize=[5,5], frameon=True, dpi=100)

@@ -41,10 +41,10 @@ def train(args):
   if args.verbose:
     print("Training baseline model:" if args.baseline else "Training HNN model:")
   if args.baseline:
-    nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim, nonlinearity=args.nonlinearity,middle_layers=8)
+    nn_model = MLP(args.input_dim, args.hidden_dim, args.input_dim, nonlinearity=args.nonlinearity,middle_layers=1)
     model = HNNBaseline(args.input_dim, baseline_model=nn_model)
   else:
-    nn_model = MLP(args.input_dim, args.hidden_dim, 2, nonlinearity=args.nonlinearity,middle_layers=8)
+    nn_model = MLP(args.input_dim, args.hidden_dim, 2, nonlinearity=args.nonlinearity,middle_layers=1)
     #model = HNN(args.input_dim, differentiable_model=nn_model, field_type='conservative') #field_type='solenoidal')
     model = HNN(args.input_dim, differentiable_model=nn_model, field_type='solenoidal')
 
@@ -76,7 +76,8 @@ def train(args):
     val_dxdt_hat = model.time_derivative(val_x + noise)
     val_loss = L2_loss(val_dxdt, val_dxdt_hat)
     val_sort = ((val_dxdt-val_dxdt_hat)**2).sum(dim=1)
-    #print(torch.cat([val_dxdt,val_dxdt_hat],dim=1)[val_sort.max(0)[1]])
+    #for idx in range(10):
+    #  print(torch.cat([val_dxdt,val_dxdt_hat],dim=1)[idx]) #[val_sort.max(0)[1]])
     stats['train_loss'].append(loss.item())
     stats['val_loss'].append(val_loss.item())
     if args.verbose and step % args.print_every == 0:
