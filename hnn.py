@@ -9,10 +9,11 @@ from utils import rk4
 
 class HNN(torch.nn.Module):
     '''Learn arbitrary vector fields that are sums of conservative and solenoidal fields'''
-    def __init__(self, input_dim, differentiable_model, field_type='solenoidal', baseline=False):
+    def __init__(self, input_dim, differentiable_model, field_type='solenoidal', baseline=False, constrained_permutation=False):
         super(HNN, self).__init__()
         self.baseline = baseline
         self.differentiable_model = differentiable_model
+        self.constrained_permutation = constrained_permutation
         self.M = self.permutation_tensor(input_dim) # Levi-Civita permutation tensor
         self.field_type = field_type
 
@@ -52,17 +53,21 @@ class HNN(torch.nn.Module):
 
         return conservative_field + solenoidal_field
 
-    @staticmethod
-    def permutation_tensor(n):
-        '''Constructs the Levi-Civita permutation tensor'''
-        M = torch.ones(n,n) # matrix of ones
-        M *= 1 - torch.eye(n) # clear diagonals
-        M[::2] *= -1 # pattern of signs
-        M[:,::2] *= -1
-
-        for i in range(n): # make asymmetric
-            for j in range(i+1, n):
-                M[i,j] *= -1
+    def permutation_tensor(self,n):
+        M=None
+        if self.constrained_permutation:
+            M = torch.eye(n)
+            M = torch.cat([M[n//2:], -M[:n//2]])
+        else:
+            '''Constructs the Levi-Civita permutation tensor'''
+            M = torch.ones(n,n) # matrix of ones
+            M *= 1 - torch.eye(n) # clear diagonals
+            M[::2] *= -1 # pattern of signs
+            M[:,::2] *= -1
+    
+            for i in range(n): # make asymmetric
+                for j in range(i+1, n):
+                    M[i,j] *= -1
         return M
 
 
