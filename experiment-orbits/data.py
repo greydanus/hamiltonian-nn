@@ -104,7 +104,7 @@ def coords2state(coords, nbodies=2, mass=1):
 
 
 ##### INTEGRATE AN ORBIT OR TWO #####
-def sample_orbits(timesteps=50, trials=200, nbodies=2, orbit_noise=5e-2,
+def sample_orbits(timesteps=50, trials=1000, nbodies=2, orbit_noise=5e-2,
                   min_radius=0.5, max_radius=1.5, t_span=[0, 20], verbose=False, **kwargs):
     
     orbit_settings = locals()

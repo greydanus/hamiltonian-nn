@@ -19,9 +19,10 @@ def get_args():
     parser.add_argument('--input_dim', default=2*4, type=int, help='dimensionality of input tensor')
     parser.add_argument('--hidden_dim', default=200, type=int, help='hidden dimension of mlp')
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
+    parser.add_argument('--batch_size', default=200, type=int, help='batch_size')
     parser.add_argument('--input_noise', default=0.0, type=int, help='std of noise added to inputs')
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
-    parser.add_argument('--total_steps', default=1500, type=int, help='number of gradient steps')
+    parser.add_argument('--total_steps', default=10000, type=int, help='number of gradient steps')
     parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
     parser.add_argument('--name', default='2body', type=str, help='only one option right now')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
@@ -59,17 +60,19 @@ def train(args):
   for step in range(args.total_steps+1):
 
     # train step
-    dxdt_hat = model.time_derivative(x)
-    dxdt_hat += args.input_noise * torch.randn(*x.shape) # add noise, maybe
-    loss = L2_loss(dxdt, dxdt_hat)
+    ixs = torch.randperm(x.shape[0])[:args.batch_size]
+    dxdt_hat = model.time_derivative(x[ixs])
+    dxdt_hat += args.input_noise * torch.randn(*x[ixs].shape) # add noise, maybe
+    loss = L2_loss(dxdt[ixs], dxdt_hat)
     loss.backward()
     grad = torch.cat([p.grad.flatten() for p in model.parameters()]).clone()
     optim.step() ; optim.zero_grad()
 
     # run test data
-    test_dxdt_hat = model.time_derivative(test_x)
-    test_dxdt_hat += args.input_noise * torch.randn(*test_x.shape) # add noise, maybe
-    test_loss = L2_loss(test_dxdt, test_dxdt_hat)
+    test_ixs = torch.randperm(test_x.shape[0])[:args.batch_size]
+    test_dxdt_hat = model.time_derivative(test_x[test_ixs])
+    test_dxdt_hat += args.input_noise * torch.randn(*test_x[test_ixs].shape) # add noise, maybe
+    test_loss = L2_loss(test_dxdt[test_ixs], test_dxdt_hat)
 
     # logging
     stats['train_loss'].append(loss.item())
