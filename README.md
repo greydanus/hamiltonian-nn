@@ -89,7 +89,7 @@ Here's what it looks like when we add energy halfway through the simulation:
 Modeling larger systems
 --------
 
-We can also model larger systems -- systems with more than one pair of canonical coordinates. The 2D two-body problem, for example, has four coordinate pairs.
+We can also model larger systems -- systems with more than one pair of canonical coordinates. The two-body problem, for example, has four coordinate pairs.
 
 ![orbits-compare.gif](static/orbits-compare.gif)
 
