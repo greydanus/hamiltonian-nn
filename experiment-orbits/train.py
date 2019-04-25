@@ -81,6 +81,10 @@ def train(args):
       print("step {}, train_loss {:.4e}, test_loss {:.4e}, grad norm {:.4e}, grad std {:.4e}"
           .format(step, loss.item(), test_loss.item(), grad@grad, grad.std()))
 
+  test_dxdt_hat = model.time_derivative(test_x)
+  test_dxdt_hat += args.input_noise * torch.randn(*test_x.shape) # add noise, maybe
+  test_loss = L2_loss(test_dxdt, test_dxdt_hat)
+  print('Final test loss {:.4e}'.format(test_loss.item()))
   return model, stats
 
 if __name__ == "__main__":

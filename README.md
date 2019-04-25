@@ -46,6 +46,7 @@ Modeling the conserved quantities of a physical system is one gateway to underst
 | Pend-Sim 		|   **0.0018**  		| 0.0135 			|
 | Pend-Real		|   **0.0014**   		| 0.0058 		 	|
 | Pend-Pixels	|   **2.0e-4**   		| 2.1e-4 		 	|
+| Orbits-TwoBody|   3.0e-5  	 		| **2.8e-6** 		|
 
 ### Energy MSE
 * Choose a trajectory `[x0, x1,...]` from test data
@@ -58,6 +59,7 @@ Modeling the conserved quantities of a physical system is one gateway to underst
 | Pend-Sim 		| 0.8670				| **0.1200** 		|
 | Pend-Real		| 0.0783				| **0.0023**		|
 | Pend-Pixels	| 3.9e-3   				| **4.8e-5** 		|
+| Orbits-TwoBody| 5.9e-2   				| **3.8e-5** 		|
 
 The HNN recipe
 --------
