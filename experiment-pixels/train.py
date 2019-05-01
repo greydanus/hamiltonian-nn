@@ -20,7 +20,7 @@ def get_args():
     parser.add_argument('--hidden_dim', default=200, type=int, help='hidden dimension of mlp')
     parser.add_argument('--latent_dim', default=2, type=int, help='latent dimension of autoencoder')
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
-    parser.add_argument('--input_noise', default=0.0, type=int, help='std of noise added to HNN inputs')
+    parser.add_argument('--input_noise', default=0.0, type=float, help='std of noise added to HNN inputs')
     parser.add_argument('--batch_size', default=200, type=int, help='batch size')
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
     parser.add_argument('--total_steps', default=6000, type=int, help='number of gradient steps')

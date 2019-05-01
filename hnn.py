@@ -80,7 +80,7 @@ class PixelHNN(torch.nn.Module):
         self.baseline = baseline
 
         output_dim = input_dim if baseline else 2
-        nn_model = MLP(input_dim, hidden_dim, input_dim, nonlinearity)
+        nn_model = MLP(input_dim, hidden_dim, output_dim, nonlinearity)
         self.hnn = HNN(input_dim, differentiable_model=nn_model, field_type=field_type, baseline=baseline)
 
     def encode(self, x):
