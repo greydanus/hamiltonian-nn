@@ -42,7 +42,7 @@ Modeling the conserved quantities of a physical system is one gateway to underst
 
 |               | Baseline NN 			| Hamiltonian NN 	|
 | ------------- | :-------------------: | :---------------: |
-| Toy 			|  	1.1674    	  		| **0.7676** 		|
+| Toy 			|  	0.0634    	  		| **0.0623** 		|
 | Pend-Sim 		|   **0.0018**  		| 0.0135 			|
 | Pend-Real		|   **0.0014**   		| 0.0058 		 	|
 | Pend-Pixels	|   **2.0e-4**   		| 2.1e-4 		 	|
@@ -55,7 +55,7 @@ Modeling the conserved quantities of a physical system is one gateway to underst
 
 |               | Baseline NN 			| Hamiltonian 		|
 | ------------- | :-------------------:	| :---------------:	|
-| Toy 			| 4.3797				| **0.0047** 		|
+| Toy 			| 0.5660				| **2.71e-3** 		|
 | Pend-Sim 		| 0.8670				| **0.1200** 		|
 | Pend-Real		| 0.0783				| **0.0023**		|
 | Pend-Pixels	| 3.9e-3   				| **4.8e-5** 		|
