@@ -2,7 +2,7 @@ Hamiltonian Neural Networks
 =======
 Sam Greydanus, Misko Dzamba, Jason Yosinski | 2019
 
-![toy.png](static/toy.png)
+![overall-idea.png](static/overall-idea.png)
 
 Contribution and workflow
 --------
@@ -18,13 +18,14 @@ Basic usage
 --------
 
 To train a Hamiltonian Neural Network (HNN):
- * Toy task (circular vector field + noise): `python3 experiment_toy/train.py --verbose`
- * Lipson data (simulated/real pendulum data): `python3 experiment_lipson/train.py --verbose`
- * Pixel observations (from OpenAI Gym): `python3 experiment_pixels/train.py --verbose`
+ * Toy task (circular vector field + noise): `python3 experiment-spring/train.py --verbose`
+ * Lipson data (simulated/real pendulum data): `python3 experiment-lipson/train.py --verbose`
+ * Pixel observations (from OpenAI Gym): `python3 experiment-pixels/train.py --verbose`
 
 To analyze results
- * Toy task: `analyze-toy.ipnyb`
- * Lipson data: `analyze-toy.ipnyb`
+ * Spring task: `analyze-spring.ipnyb`
+ * Pendulum task: `analyze-pend.ipnyb`
+ * Lipson data: `analyze-lipson.ipnyb`
  * Pixel observations: `analyze-pixels.ipnyb`
 
 Summary
@@ -35,14 +36,26 @@ Summary
 
 Modeling the conserved quantities of a physical system is one gateway to understanding its dynamics. Physicists use a mathematical object called the Hamiltonian to do this. They often use domain knowledge and trickery to write down the proper Hamiltonian, but here we take a different approach: we parameterize it with a differentiable model and then attempt to learn it directly from real-world data.
 
-### Test loss
-* Choose test data of the form `x=[x0, x1,...]` and `dx=[dx0, dx1,...]` where `dx` is the time derivative of `x`
+### Train loss
+* Choose data of the form `x=[x0, x1,...]` and `dx=[dx0, dx1,...]` where `dx` is the time derivative of `x`
 * Let `dx' = model.time_derivative(x)`
 * Compute L2 distance between `dx` and `dx'`
 
 |               | Baseline NN 			| Hamiltonian NN 	|
 | ------------- | :-------------------: | :---------------: |
-| Toy 			|  	0.0634    	  		| **0.0623** 		|
+| Spring 			|  	0.06375    	  		| 0.06458 		|
+| Pend-Sim 		|   _____  		| _____ 			|
+| Pend-Real		|   _____   		| _____ 		 	|
+| Pend-Pixels	|   _____   		| _____ 		 	|
+| Orbits-TwoBody|   _____  	 		| _____ 		|
+
+
+### Test loss
+Do the same thing with test data
+
+|               | Baseline NN 			| Hamiltonian NN 	|
+| ------------- | :-------------------: | :---------------: |
+| Spring 			|  	0.06344    	  		| **0.06243** 		|
 | Pend-Sim 		|   **0.0018**  		| 0.0135 			|
 | Pend-Real		|   **0.0014**   		| 0.0058 		 	|
 | Pend-Pixels	|   **2.0e-4**   		| 2.1e-4 		 	|
@@ -55,11 +68,12 @@ Modeling the conserved quantities of a physical system is one gateway to underst
 
 |               | Baseline NN 			| Hamiltonian 		|
 | ------------- | :-------------------:	| :---------------:	|
-| Toy 			| 0.5660				| **2.71e-3** 		|
+| Spring 		| 0.4737				| **2.377e-3** 		|
 | Pend-Sim 		| 0.8670				| **0.1200** 		|
 | Pend-Real		| 0.0783				| **0.0023**		|
 | Pend-Pixels	| 3.9e-3   				| **4.8e-5** 		|
 | Orbits-TwoBody| 5.9e-2   				| **3.8e-5** 		|
+
 
 The HNN recipe
 --------
