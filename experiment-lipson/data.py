@@ -1,11 +1,14 @@
 # Hamiltonian Neural Networks | 2019
 # Sam Greydanus, Misko Dzamba, Jason Yosinski
 
-import os
-import numpy as np
-from urllib.request import urlretrieve
-
 import os, sys
+from urllib.request import urlretrieve
+import autograd
+import autograd.numpy as np
+
+import scipy.integrate
+solve_ivp = scipy.integrate.solve_ivp
+
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
@@ -41,9 +44,30 @@ def get_dataset(experiment_name, save_dir, test_split=0.8):
   data['x'] = data['x'][:-1]
 
   # make a train/test split while preserving order of data
-  split_ix = int(len(data['x']) * test_split)
+  # there's no great way to do this.
+  # here we just put the test set in the middle of the sequence
+  train_set_size = int(len(data['x']) * test_split)
+  test_set_size = int(len(data['x']) * (1-test_split))
+  test_start_ix = train_set_size#int(train_set_size/2)
+  a = test_start_ix
+  b = test_start_ix + test_set_size
+
   split_data = {}
   for k, v in data.items():
-      split_data[k], split_data['test_' + k] = v[:split_ix], v[split_ix:]
+    split_data[k] = np.concatenate([v[:a],v[b:]], axis=0)
+    split_data['test_' + k] = v[a:b]
   data = split_data
   return data
+
+### FOR DYNAMICS IN ANALYSIS SECTION ###
+def hamiltonian_fn(coords):
+  k = 2.4  # this coefficient must be fit to the data
+  q, p = np.split(coords,2)
+  H = k*(1-np.cos(q)) + p**2 # pendulum hamiltonian
+  return H
+
+def dynamics_fn(t, coords):
+  dcoords = autograd.grad(hamiltonian_fn)(coords)
+  dqdt, dpdt = np.split(dcoords,2)
+  S = -np.concatenate([dpdt, -dqdt], axis=-1)
+  return S

@@ -27,7 +27,7 @@ class HNN(torch.nn.Module):
         assert y.dim() == 2 and y.shape[1] == 2, "Output tensor should have shape [batch_size, 2]"
         return y.split(1,1)
 
-    def rk4_time_derivative(self, x, dt=1):
+    def rk4_time_derivative(self, x, dt):
         return rk4(fun=self.time_derivative, y0=x, t=0, dt=dt)
 
     def time_derivative(self, x, t=None, separate_fields=False):

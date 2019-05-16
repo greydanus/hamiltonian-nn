@@ -43,11 +43,11 @@ Modeling the conserved quantities of a physical system is one gateway to underst
 
 |               | Baseline NN 			| Hamiltonian NN 	|
 | ------------- | :-------------------: | :---------------: |
-| Spring 			|  	0.06375    	  		| 0.06458 		|
-| Pend-Sim 		|   _____  		| _____ 			|
-| Pend-Real		|   _____   		| _____ 		 	|
+| Spring 		|  	0.069244    	| 0.069424 			|
+| Pend-Sim 		|   6.7275e-02  	| 6.7098e-02 		|
+| Pend-Real		|   1.9442e-03   	| 9.1540e-03 		|
 | Pend-Pixels	|   _____   		| _____ 		 	|
-| Orbits-TwoBody|   _____  	 		| _____ 		|
+| Orbits-TwoBody|   _____  	 		| _____ 			|
 
 
 ### Test loss
@@ -55,9 +55,9 @@ Do the same thing with test data
 
 |               | Baseline NN 			| Hamiltonian NN 	|
 | ------------- | :-------------------: | :---------------: |
-| Spring 			|  	0.06344    	  		| **0.06243** 		|
-| Pend-Sim 		|   **0.0018**  		| 0.0135 			|
-| Pend-Real		|   **0.0014**   		| 0.0058 		 	|
+| Spring 		|  	0.07585    	  		| **0.07574** 		|
+| Pend-Sim 		|   7.2438e-02 			| **7.2059e-02** 	|
+| Pend-Real		|   3.2514e-01   		| **3.2400e-01** 	|
 | Pend-Pixels	|   **2.0e-4**   		| 2.1e-4 		 	|
 | Orbits-TwoBody|   3.0e-5  	 		| **2.8e-6** 		|
 
@@ -68,9 +68,9 @@ Do the same thing with test data
 
 |               | Baseline NN 			| Hamiltonian 		|
 | ------------- | :-------------------:	| :---------------:	|
-| Spring 		| 0.4737				| **2.377e-3** 		|
-| Pend-Sim 		| 0.8670				| **0.1200** 		|
-| Pend-Real		| 0.0783				| **0.0023**		|
+| Spring 		| 3.1165e-02			| **2.5662e-05** 	|
+| Pend-Sim 		| 3.4347e-03			| **2.8672e-05** 	|
+| Pend-Real		| 3.7138e-01			| **1.1031e-02**		|
 | Pend-Pixels	| 3.9e-3   				| **4.8e-5** 		|
 | Orbits-TwoBody| 5.9e-2   				| **3.8e-5** 		|
 

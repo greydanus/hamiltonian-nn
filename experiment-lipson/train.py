@@ -12,21 +12,21 @@ sys.path.append(PARENT_DIR)
 from nn_models import MLP
 from hnn import HNN
 from data import get_dataset
-from utils import L2_loss
+from utils import L2_loss, rk4
 
 def get_args():
     parser = argparse.ArgumentParser(description=None)
     parser.add_argument('--input_dim', default=2, type=int, help='dimensionality of input tensor')
     parser.add_argument('--hidden_dim', default=200, type=int, help='hidden dimension of mlp')
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
-    parser.add_argument('--input_noise', default=0.0, type=int, help='std of noise added to HNN inputs')
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
-    parser.add_argument('--total_steps', default=3000, type=int, help='number of gradient steps')
+    parser.add_argument('--total_steps', default=2000, type=int, help='number of gradient steps')
     parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
     parser.add_argument('--verbose', dest='verbose', action='store_true', help='verbose?')
-    parser.add_argument('--name', default='pend-real', type=str, help='[pend-real, pend-sim]')
+    parser.add_argument('--name', default='lipson', type=str, help='name of the task')
     parser.add_argument('--field_type', default='solenoidal', type=str, help='type of vector field to learn')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
+    parser.add_argument('--use_rk4', dest='use_rk4', action='store_true', help='integrate derivative with RK4')
     parser.add_argument('--seed', default=0, type=int, help='random seed')
     parser.add_argument('--save_dir', default=THIS_DIR, type=str, help='where to save the trained model')
     parser.set_defaults(feature=True)
@@ -47,7 +47,7 @@ def train(args):
   optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-5)
 
   # arrange data
-  data = get_dataset(args.name, args.save_dir)
+  data = get_dataset('pend-real', args.save_dir)
   x = torch.tensor( data['x'], requires_grad=True, dtype=torch.float32)
   test_x = torch.tensor( data['test_x'], requires_grad=True, dtype=torch.float32)
   dxdt = torch.Tensor(data['dx'])
@@ -58,14 +58,12 @@ def train(args):
   for step in range(args.total_steps+1):
 
     # train step
-    noise = args.input_noise * torch.randn(*x.shape)
-    dxdt_hat = model.time_derivative(x + noise)
+    dxdt_hat = model.rk4_time_derivative(x, dt=1/6.) if args.use_rk4 else model.time_derivative(x)
     loss = L2_loss(dxdt, dxdt_hat)
     loss.backward() ; optim.step() ; optim.zero_grad()
 
     # run validation
-    noise = args.input_noise * torch.randn(*test_x.shape)
-    test_dxdt_hat = model.time_derivative(test_x + noise)
+    test_dxdt_hat = model.rk4_time_derivative(test_x, dt=1/6.)
     test_loss = L2_loss(test_dxdt, test_dxdt_hat)
 
     # logging
@@ -82,6 +80,7 @@ if __name__ == "__main__":
 
     # save
     os.makedirs(args.save_dir) if not os.path.exists(args.save_dir) else None
-    label = 'baseline' if args.baseline else 'hnn'
-    path = '{}/{}-{}.tar'.format(args.save_dir, args.name, label)
+    label = '-baseline' if args.baseline else '-hnn'
+    label = '-rk4' + label if args.use_rk4 else label
+    path = '{}/{}{}.tar'.format(args.save_dir, args.name, label)
     torch.save(model.state_dict(), path)
