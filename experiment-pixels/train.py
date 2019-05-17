@@ -1,8 +1,12 @@
 # Hamiltonian Neural Networks | 2019
 # Sam Greydanus, Misko Dzamba, Jason Yosinski
 
+import autograd
+import autograd.numpy as np
+import scipy.integrate
+solve_ivp = scipy.integrate.solve_ivp
+
 import torch, argparse
-import numpy as np
 
 import os, sys
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -26,7 +30,7 @@ def get_args():
     parser.add_argument('--total_steps', default=6000, type=int, help='number of gradient steps')
     parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
     parser.add_argument('--verbose', dest='verbose', action='store_true', help='verbose?')
-    parser.add_argument('--name', default='pendulum', type=str, help='either "real" or "sim" data')
+    parser.add_argument('--name', default='pixels', type=str, help='either "real" or "sim" data')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
     parser.add_argument('--seed', default=0, type=int, help='random seed')
     parser.add_argument('--save_dir', default=THIS_DIR, type=str, help='where to save the trained model')
@@ -75,7 +79,7 @@ def train(args):
   optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-5)
 
   # get dataset
-  data = get_dataset(args.name, args.save_dir, verbose=True, seed=args.seed)
+  data = get_dataset('pendulum', args.save_dir, verbose=True, seed=args.seed)
 
   x = torch.tensor( data['pixels'], dtype=torch.float32)
   test_x = torch.tensor( data['test_pixels'], dtype=torch.float32)

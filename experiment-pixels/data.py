@@ -142,3 +142,17 @@ def get_dataset(experiment_name, save_dir, **kwargs):
       to_pickle(data, path)
 
   return data
+
+
+### FOR DYNAMICS IN ANALYSIS SECTION ###
+def hamiltonian_fn(coords):
+  k = 1.9  # this coefficient must be fit to the data
+  q, p = np.split(coords,2)
+  H = k*(1-np.cos(q)) + p**2 # pendulum hamiltonian
+  return H
+
+def dynamics_fn(t, coords):
+  dcoords = autograd.grad(hamiltonian_fn)(coords)
+  dqdt, dpdt = np.split(dcoords,2)
+  S = -np.concatenate([dpdt, -dqdt], axis=-1)
+  return S
