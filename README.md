@@ -74,37 +74,37 @@ Numbers
 * Compute L2 distance between `dx` and `dx'`
 
 |               | Baseline NN 			| Hamiltonian NN 	|
-| ------------- | :-------------------: | :---------------: |
-| Spring 		|  	0.069244    	| 0.069424 			|
-| Pend-Sim 		|   6.7275e-02  	| 6.7098e-02 		|
-| Pend-Real		|   1.9442e-03   	| 9.1540e-03 		|
-| Pend-Pixels	|   2.9778e-04   	| 4.3140e-04 	 	|
-| Orbits-TwoBody|   6.6410e-05  	| 2.6157e-06		|
+| ------------- 	| :-------------------: | :---------------: |
+| Ideal mass-spring |  	0.069244    	| 0.069424 			|
+| Ideal pendulum 	|   6.7275e-02  	| 6.7098e-02 		|
+| Real pendulum 	|   1.9442e-03   	| 9.1540e-03 		|
+| Two body problem 	|   6.6410e-05  	| 2.6157e-06		|
+| Pixel pendulum 	|   2.9778e-04   	| 4.3140e-04 	 	|
 
 
 ### Test loss
 Do the same thing with test data
 
-|               | Baseline NN 			| Hamiltonian NN 	|
-| ------------- | :-------------------: | :---------------: |
-| Spring 		|  	0.07585    	  		| **0.07574** 		|
-| Pend-Sim 		|   7.2438e-02 			| **7.2059e-02** 	|
-| Pend-Real		|   3.2514e-01   		| **3.2400e-01** 	|
-| Pend-Pixels	|   4.3923e-04   		| **3.5081e-04**  	|
-| Orbits-TwoBody|   2.9605e-05  	 	| **2.8218e-06** 	|
+|               	| Baseline NN 			| Hamiltonian NN 	|
+| ------------- 	| :-------------------: | :---------------: |
+| Ideal mass-spring |  	0.07585    	  		| **0.07574** 		|
+| Ideal pendulum 	|   7.2438e-02 			| **7.2059e-02** 	|
+| Real pendulum 	|   3.2514e-01   		| **3.2400e-01** 	|
+| Two body problem 	|   2.9605e-05  	 	| **2.8218e-06** 	|
+| Pixel pendulum 	|   4.3923e-04   		| **3.5081e-04**  	|
 
 ### Energy MSE
 * Choose a trajectory `[x0, x1,...]` from test data
 * Use RK4 integration to estimate `[x0', x1',...]` using the model
 * Compute the L2 distance between `[energy(x0), energy(x1),...]` and `[energy(x0'), energy(x1'),...]`
 
-|               | Baseline NN 			| Hamiltonian 		|
-| ------------- | :-------------------:	| :---------------:	|
-| Spring 		| 3.1165e-02			| **2.5662e-05** 	|
-| Pend-Sim 		| 3.4347e-03			| **2.8672e-05** 	|
-| Pend-Real		| 3.7138e-01			| **1.1031e-02**	|
-| Pend-Pixels	| 9.3841e-03   			| **1.0049e-04** 	|
-| Orbits-TwoBody| 5.954e-02   			| **3.738e-05** 	|
+|               	| Baseline NN 			| Hamiltonian NN	|
+| ------------- 	| :-------------------:	| :---------------:	|
+| Ideal mass-spring | 3.1165e-02			| **2.5662e-05** 	|
+| Ideal pendulum 	| 3.4347e-03			| **2.8672e-05** 	|
+| Real pendulum 	| 3.7138e-01			| **1.1031e-02**	|
+| Two body problem 	| 5.954e-02   			| **3.738e-05** 	|
+| Pixel pendulum 	| 9.3841e-03   			| **1.0049e-04** 	|
 
 
 Dependencies
