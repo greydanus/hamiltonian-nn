@@ -15,11 +15,11 @@ To train a Hamiltonian Neural Network (HNN):
  * Task 5: Pixel pendulum (from OpenAI Gym): `python3 experiment-pixels/train.py --verbose`
 
 To analyze results
- * Task 1: Ideal mass-spring system: [`analyze-spring.ipnyb`](./analyze-spring.ipnyb)
- * Task 2: Ideal pendulum: `analyze-pend.ipnyb`
- * Task 3: Real pendulum: `analyze-lipson.ipnyb`
- * Task 4: Two body problem: `analyze-pixels.ipnyb`
- * Task 5: Pixel pendulum: `analyze-pixels.ipnyb`
+ * Task 1: Ideal mass-spring system: [`analyze-spring.ipnyb`](analyze-spring.ipynb)
+ * Task 2: Ideal pendulum: [`analyze-pend.ipnyb`](analyze-spring.ipynb)
+ * Task 3: Real pendulum: [`analyze-lipson.ipnyb`](analyze-spring.ipynb)
+ * Task 4: Two body problem: [`analyze-pixels.ipnyb`](analyze-spring.ipynb)
+ * Task 5: Pixel pendulum: [`analyze-pixels.ipnyb`](analyze-spring.ipynb)
 
 Summary
 --------
