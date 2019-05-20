@@ -75,10 +75,10 @@ Numbers
 
 |               | Baseline NN 			| Hamiltonian NN 	|
 | ------------- 	| :-------------------: | :---------------: |
-| Ideal mass-spring |  	9.4780e-03    	| 9.4139e-03 			|
-| Ideal pendulum 	|   7.7911e-03  	| 7.8004e-03 		|
-| Real pendulum 	|   1.9442e-03   	| 9.1540e-03 		|
-| Two body problem 	|   6.6410e-05  	| 2.6157e-06		|
+| Ideal mass-spring |  	3.7122e-02    	| 3.6927e-02 			|
+| Ideal pendulum 	|   3.2606e-02  	| 3.2787e-02 		|
+| Real pendulum 	|   1.9442e-03   	| 9.1546e-03 		|
+| Two body problem 	|   2.6450e-05  	| 2.8388e-06		|
 | Pixel pendulum 	|   2.9778e-04   	| 4.3140e-04 	 	|
 
 
@@ -87,10 +87,10 @@ Do the same thing with test data
 
 |               	| Baseline NN 			| Hamiltonian NN 	|
 | ------------- 	| :-------------------: | :---------------: |
-| Ideal mass-spring |  	9.2849e-03    	  	| **9.2161e-03** 		|
-| Ideal pendulum 	|   9.7497e-03 			| **9.6965e-03** 	|
+| Ideal mass-spring |  	3.6656e-02    	  	| **3.5920e-02** 	|
+| Ideal pendulum 	|   3.5273e-02 			| **3.5586e-02** 	|
 | Real pendulum 	|   3.2514e-01   		| **3.2400e-01** 	|
-| Two body problem 	|   2.9605e-05  	 	| **2.8218e-06** 	|
+| Two body problem 	|   2.9575e-05  	 	| **2.8838e-06** 	|
 | Pixel pendulum 	|   4.3923e-04   		| **3.5081e-04**  	|
 
 ### Energy MSE
@@ -100,10 +100,10 @@ Do the same thing with test data
 
 |               	| Baseline NN 			| Hamiltonian NN	|
 | ------------- 	| :-------------------:	| :---------------:	|
-| Ideal mass-spring | 3.1165e-02			| **2.5662e-05** 	|
-| Ideal pendulum 	| 3.4347e-03			| **2.8672e-05** 	|
-| Real pendulum 	| 3.7138e-01			| **1.1031e-02**	|
-| Two body problem 	| 5.954e-02   			| **3.738e-05** 	|
+| Ideal mass-spring | 1.7077e-01			| **3.8119e-04** 	|
+| Ideal pendulum 	| 4.1537e-02			| **2.4852e-02** 	|
+| Real pendulum 	| 3.7144e-01			| **1.2468e-02**	|
+| Two body problem 	| 5.933e-02   			| **3.870e-05** 	|
 | Pixel pendulum 	| 9.3841e-03   			| **1.0049e-04** 	|
 
 

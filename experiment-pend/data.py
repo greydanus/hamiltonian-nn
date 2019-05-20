@@ -15,7 +15,7 @@ def hamiltonian_fn(coords):
 def dynamics_fn(t, coords):
     dcoords = autograd.grad(hamiltonian_fn)(coords)
     dqdt, dpdt = np.split(dcoords,2)
-    S = -np.concatenate([dpdt, -dqdt], axis=-1)
+    S = np.concatenate([dpdt, -dqdt], axis=-1)
     return S
 
 def get_trajectory(t_span=[0,3], timescale=15, radius=None, y0=None, noise_std=0.1, **kwargs):
