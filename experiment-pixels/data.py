@@ -35,7 +35,8 @@ def sample_gym(seed=0, timesteps=103, trials=200, side=28, min_angle=0., max_ang
 
     gym_settings = locals()
     if verbose:
-        print("Making a dataset of pendulum pixel observations:")
+        print("Making a dataset of pendulum pixel observations.")
+        print("Edit 5/20/19: you may have to rewrite the `preproc` function depending on your screen size.")
     env = gym.make(env_name)
     env.reset() ; env.seed(seed)
 

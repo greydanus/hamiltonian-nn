@@ -104,7 +104,7 @@ Do the same thing with test data
 | Ideal pendulum 	| 4.1537e-02			| **2.4852e-02** 	|
 | Real pendulum 	| 3.7144e-01			| **1.2468e-02**	|
 | Two body problem 	| 5.933e-02   			| **3.870e-05** 	|
-| Pixel pendulum 	| 9.3841e-03   			| **1.0049e-04** 	|
+| Pixel pendulum 	| 9.3855e-03   			| **1.0214e-04** 	|
 
 
 Dependencies
