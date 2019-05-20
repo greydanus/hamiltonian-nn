@@ -79,7 +79,7 @@ Numbers
 | Ideal pendulum 	|   3.2606e-02  	| 3.2787e-02 		|
 | Real pendulum 	|   1.9442e-03   	| 9.1546e-03 		|
 | Two body problem 	|   2.6450e-05  	| 2.8388e-06		|
-| Pixel pendulum 	|   2.9778e-04   	| 4.3140e-04 	 	|
+| Pixel pendulum 	|   1.6088e-04   	| 1.9994e-04 	 	|
 
 
 ### Test loss
@@ -91,7 +91,7 @@ Do the same thing with test data
 | Ideal pendulum 	|   3.5273e-02 			| **3.5586e-02** 	|
 | Real pendulum 	|   3.2514e-01   		| **3.2400e-01** 	|
 | Two body problem 	|   2.9575e-05  	 	| **2.8838e-06** 	|
-| Pixel pendulum 	|   4.3923e-04   		| **3.5081e-04**  	|
+| Pixel pendulum 	|   **1.8137e-04**   		| 2.1139e-04  	|
 
 ### Energy MSE
 * Choose a trajectory `[x0, x1,...]` from test data
