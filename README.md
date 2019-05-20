@@ -75,8 +75,8 @@ Numbers
 
 |               | Baseline NN 			| Hamiltonian NN 	|
 | ------------- 	| :-------------------: | :---------------: |
-| Ideal mass-spring |  	0.069244    	| 0.069424 			|
-| Ideal pendulum 	|   6.7275e-02  	| 6.7098e-02 		|
+| Ideal mass-spring |  	9.4780e-03    	| 9.4139e-03 			|
+| Ideal pendulum 	|   7.7911e-03  	| 7.8004e-03 		|
 | Real pendulum 	|   1.9442e-03   	| 9.1540e-03 		|
 | Two body problem 	|   6.6410e-05  	| 2.6157e-06		|
 | Pixel pendulum 	|   2.9778e-04   	| 4.3140e-04 	 	|
@@ -87,8 +87,8 @@ Do the same thing with test data
 
 |               	| Baseline NN 			| Hamiltonian NN 	|
 | ------------- 	| :-------------------: | :---------------: |
-| Ideal mass-spring |  	0.07585    	  		| **0.07574** 		|
-| Ideal pendulum 	|   7.2438e-02 			| **7.2059e-02** 	|
+| Ideal mass-spring |  	9.2849e-03    	  	| **9.2161e-03** 		|
+| Ideal pendulum 	|   9.7497e-03 			| **9.6965e-03** 	|
 | Real pendulum 	|   3.2514e-01   		| **3.2400e-01** 	|
 | Two body problem 	|   2.9605e-05  	 	| **2.8218e-06** 	|
 | Pixel pendulum 	|   4.3923e-04   		| **3.5081e-04**  	|

@@ -47,7 +47,7 @@ class HNN(torch.nn.Module):
 
         if self.field_type != 'conservative':
             dF2 = torch.autograd.grad(F2.sum(), x, create_graph=True)[0] # gradients for solenoidal field
-            solenoidal_field = dF2 @ self.M.t()
+            solenoidal_field = dF2 @ self.M
 
         if separate_fields:
             return [conservative_field, solenoidal_field]

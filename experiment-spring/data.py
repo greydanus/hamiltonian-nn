@@ -9,7 +9,7 @@ solve_ivp = scipy.integrate.solve_ivp
 
 def hamiltonian_fn(coords):
     q, p = np.split(coords,2)
-    H = p**2 + q**2
+    H = p**2 + q**2 # spring hamiltonian (linear oscillator)
     return H
 
 def dynamics_fn(t, coords):
@@ -18,14 +18,14 @@ def dynamics_fn(t, coords):
     S = -np.concatenate([dpdt, -dqdt], axis=-1)
     return S
 
-def get_trajectory(t_span=[0,3], timescale=10, radius=None, y0=None, noise_std=0.05, **kwargs):
+def get_trajectory(t_span=[0,3], timescale=10, radius=None, y0=None, noise_std=0.1, **kwargs):
     t_eval = np.linspace(t_span[0], t_span[1], int(timescale*(t_span[1]-t_span[0])))
     
     # get initial state
     if y0 is None:
         y0 = np.random.rand(2)*2-1
     if radius is None:
-        radius = np.random.rand()*.9 + 0.1 # sample a range of radii
+        radius = np.random.rand()*0.9 + 0.1 # sample a range of radii
     y0 = y0 / np.sqrt((y0**2).sum()) * radius ## set the appropriate radius
 
     spring_ivp = solve_ivp(fun=dynamics_fn, t_span=t_span, y0=y0, t_eval=t_eval, rtol=1e-10, **kwargs)
