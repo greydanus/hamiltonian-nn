@@ -10,21 +10,23 @@ Basic usage
 To train a Hamiltonian Neural Network (HNN):
  * Task 1: Ideal mass-spring system: `python3 experiment-spring/train.py --verbose`
  * Task 2: Ideal pendulum: `python3 experiment-pend/train.py --verbose`
- * Task 3: Real pendulum (from this [Science](http://science.sciencemag.org/content/324/5923/81) paper): `python3 experiment-lipson/train.py --verbose`
- * Task 4: Two body problem: `python3 experiment-orbits/train.py --verbose`
+ * Task 3: Real pendulum (from this [Science](http://science.sciencemag.org/content/324/5923/81) paper): `python3 experiment-real/train.py --verbose`
+ * Task 4: Two-body problem: `python3 experiment-2body/train.py --verbose`
+ * Task 4b: Three-body problem: `python3 experiment-3body/train.py --verbose`
  * Task 5: Pixel pendulum (from OpenAI Gym): `python3 experiment-pixels/train.py --verbose`
 
 To analyze results
  * Task 1: Ideal mass-spring system: [`analyze-spring.ipnyb`](analyze-spring.ipynb)
- * Task 2: Ideal pendulum: [`analyze-pend.ipnyb`](analyze-spring.ipynb)
- * Task 3: Real pendulum: [`analyze-lipson.ipnyb`](analyze-spring.ipynb)
- * Task 4: Two body problem: [`analyze-pixels.ipnyb`](analyze-spring.ipynb)
- * Task 5: Pixel pendulum: [`analyze-pixels.ipnyb`](analyze-spring.ipynb)
+ * Task 2: Ideal pendulum: [`analyze-pend.ipnyb`](analyze-pend.ipynb)
+ * Task 3: Real pendulum: [`analyze-real.ipnyb`](analyze-real.ipynb)
+ * Task 4: Two-body problem: [`analyze-2body.ipnyb`](analyze-2body.ipynb)
+ * Task 4b: Three-body problem: [`analyze-3body.ipnyb`](analyze-3body.ipynb)
+ * Task 5: Pixel pendulum: [`analyze-pixels.ipnyb`](analyze-pixels.ipynb)
 
 Summary
 --------
 
-Even though neural networks enjoy widespread use, they still struggle to learn the basic laws of physics. How might we endow them with better inductive biases? In this paper, we draw inspiration from Hamiltonian mechanics to train models that learn and respect conservation laws in an unsupervised manner. We evaluate our models on problems where conservation of energy is important, including the chaotic three-body problem and pixel observations of a pendulum. Our model trains faster and generalizes better than a baseline network. An interesting side effect is that our model is perfectly reversible in time.
+ Even though neural networks enjoy widespread use, they still struggle to learn the basic laws of physics. How might we endow them with better inductive biases? In this paper, we draw inspiration from Hamiltonian mechanics to train models that learn and respect exact conservation laws in an unsupervised manner. We evaluate our models on problems where conservation of energy is important, including the two-body problem and pixel observations of a pendulum. Our model trains faster and generalizes better than a regular neural network. An interesting side effect is that our model is perfectly reversible in time.
 
  * [Paper](static/hnn-paper.pdf)
 
@@ -111,6 +113,7 @@ Do the same thing with test data
 
 Dependencies
 --------
+This project is written in Python 3.
  * OpenAI Gym
  * PyTorch
  * NumPy
