@@ -73,14 +73,14 @@ Numbers
 * Let `dx' = model.time_derivative(x)`
 * Compute L2 distance between `dx` and `dx'`
 
-|               	| Baseline NN 			| Hamiltonian NN 	|
-| ------------- 	| :-------------------: | :---------------: |
-| Ideal mass-spring |  	3.7122e-02    	| 3.6927e-02 			|
+|               	| Baseline NN 		| Hamiltonian NN 	|
+| ------------- 	| :---------------: | :---------------: |
+| Ideal mass-spring |  	3.7122e-02    	| 3.6927e-02 		|
 | Ideal pendulum 	|   3.2606e-02  	| 3.2787e-02 		|
 | Real pendulum 	|   1.9442e-03   	| 9.1546e-03 		|
 | 2 body problem 	|   2.6450e-05  	| 2.8388e-06		|
-| 3 body problem 	|   2.2178e-01  	| 4.1362e-01		|
-| Pixel pendulum 	|   1.6088e-04   	| 1.9994e-04 	 	|
+| 3 body problem 	|   9.5573e-02  	| 8.0346e-02		|
+| Pixel pendulum 	|   1.6088e-04   	| 1.000e-04 	 	|
 
 
 ### Test loss
@@ -92,8 +92,8 @@ Do the same thing with test data
 | Ideal pendulum 	|   3.5273e-02 			| **3.5586e-02** 	|
 | Real pendulum 	|   3.2514e-01   		| **3.2400e-01** 	|
 | 2 body problem 	|   2.9575e-05  	 	| **2.8838e-06** 	|
-| 3 body problem 	|   **5.5668e-01**  	| 7.6108e-01		|
-| Pixel pendulum 	|   **1.8137e-04**   	| 2.1139e-04  	|
+| 3 body problem 	|   **3.8000e-01**  	| 4.8809e-01		|
+| Pixel pendulum 	|   **1.8137e-04**   	| 2.1139e-04  		|
 
 ### Energy MSE
 * Choose a trajectory `[x0, x1,...]` from test data
@@ -106,7 +106,7 @@ Do the same thing with test data
 | Ideal pendulum 	| 4.1537e-02			| **2.4852e-02** 	|
 | Real pendulum 	| 3.7144e-01			| **1.2468e-02**	|
 | 2 body problem 	| 5.933e-02   			| **3.870e-05** 	|
-| 3 body problem 	| 7.358e+02  			| **8.923e-02**		|
+| 3 body problem 	| 1.039e+02  			| **3.940e-02**		|
 | Pixel pendulum 	| 9.3855e-03   			| **1.0214e-04** 	|
 
 
