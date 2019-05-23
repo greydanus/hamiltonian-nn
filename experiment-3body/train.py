@@ -21,7 +21,7 @@ def get_args():
     parser.add_argument('--learn_rate', default=1e-3, type=float, help='learning rate')
     parser.add_argument('--batch_size', default=600, type=int, help='batch_size')
     parser.add_argument('--nonlinearity', default='tanh', type=str, help='neural net nonlinearity')
-    parser.add_argument('--total_steps', default=5000, type=int, help='number of gradient steps')
+    parser.add_argument('--total_steps', default=10000, type=int, help='number of gradient steps')
     parser.add_argument('--print_every', default=200, type=int, help='number of gradient steps between prints')
     parser.add_argument('--name', default='3body', type=str, help='only one option right now')
     parser.add_argument('--baseline', dest='baseline', action='store_true', help='run baseline or experiment?')
@@ -45,7 +45,7 @@ def train(args):
   nn_model = MLP(args.input_dim, args.hidden_dim, output_dim, args.nonlinearity)
   model = HNN(args.input_dim, differentiable_model=nn_model,
             field_type=args.field_type, baseline=args.baseline)
-  optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=0)
+  optim = torch.optim.Adam(model.parameters(), args.learn_rate, weight_decay=1e-5)
 
   # arrange data
   data = get_dataset(args.name, args.save_dir, verbose=True)
@@ -82,7 +82,7 @@ def train(args):
   train_loss = L2_loss(dxdt, train_dxdt_hat)
   test_dxdt_hat = model.time_derivative(test_x)
   test_loss = L2_loss(test_dxdt, test_dxdt_hat)
-  print('Final train loss {:.4e}, Final test loss {:.4e}'.format(test_loss.item(), test_loss.item()))
+  print('Final train loss {:.4e}, Final test loss {:.4e}'.format(train_loss.item(), test_loss.item()))
   return model, stats
 
 if __name__ == "__main__":
