@@ -73,6 +73,14 @@ def train(args):
     if args.verbose and step % args.print_every == 0:
       print("step {}, train_loss {:.4e}, test_loss {:.4e}".format(step, loss.item(), test_loss.item()))
 
+  train_dxdt_hat = model.time_derivative(x)
+  train_dist = (dxdt - train_dxdt_hat)**2
+  test_dxdt_hat = model.time_derivative(test_x)
+  test_dist = (test_dxdt - test_dxdt_hat)**2
+  print('Final train loss {:.4e} +/- {:.4e}\nFinal test loss {:.4e} +/- {:.4e}'
+    .format(train_dist.mean().item(), train_dist.std().item()/np.sqrt(train_dist.shape[0]),
+            test_dist.mean().item(), test_dist.std().item()/np.sqrt(test_dist.shape[0])))
+
   return model, stats
 
 if __name__ == "__main__":

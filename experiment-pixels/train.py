@@ -39,28 +39,30 @@ def get_args():
 
 '''The loss for this model is a bit complicated, so we'll
     define it in a separate function for clarity.'''
-def pixelhnn_loss(x, x_next, model):
+def pixelhnn_loss(x, x_next, model, return_scalar=True):
   # encode pixel space -> latent dimension
   z = model.encode(x)
   z_next = model.encode(x_next)
 
   # autoencoder loss
   x_hat = model.decode(z)
-  ae_loss = L2_loss(x, x_hat)
+  ae_loss = ((x - x_hat)**2).mean(1)
 
   # hnn vector field loss
   noise = args.input_noise * torch.randn(*z.shape)
   z_hat_next = z + model.time_derivative(z + noise) # replace with rk4
-  hnn_loss = L2_loss(z_next, z_hat_next)
+  hnn_loss = ((z_next - z_hat_next)**2).mean(1)
 
   # canonical coordinate loss
   # -> makes latent space look like (x, v) coordinates
   w, dw = z.split(1,1)
   w_next, _ = z_next.split(1,1)
-  cc_loss = L2_loss(dw, w_next - w)
+  cc_loss = ((dw-(w_next - w))**2).mean(1)
 
   # sum losses and take a gradient step
   loss = ae_loss + cc_loss + 1e-1 * hnn_loss
+  if return_scalar:
+    return loss.mean()
   return loss
 
 def train(args):
@@ -105,8 +107,11 @@ def train(args):
       print("step {}, train_loss {:.4e}, test_loss {:.4e}"
         .format(step, loss.item(), test_loss.item()))
 
-  test_loss = pixelhnn_loss(test_x, test_next_x, model)
-  print('Final test loss {:.4e}'.format(test_loss.item()))
+  train_dist = pixelhnn_loss(x, next_x, model, return_scalar=False)
+  test_dist = pixelhnn_loss(test_x, test_next_x, model, return_scalar=False)
+  print('Final train loss {:.4e} +/- {:.4e}\nFinal test loss {:.4e} +/- {:.4e}'
+    .format(train_dist.mean().item(), train_dist.std().item()/np.sqrt(train_dist.shape[0]),
+            test_dist.mean().item(), test_dist.std().item()/np.sqrt(test_dist.shape[0])))
   return model, stats
 
 if __name__ == "__main__":

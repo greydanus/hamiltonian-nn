@@ -76,12 +76,12 @@ Numbers
 
 |               	| Baseline NN 		| Hamiltonian NN 	|
 | ------------- 	| :---------------: | :---------------: |
-| Ideal mass-spring |  	3.7122e-02    	| 3.6927e-02 		|
-| Ideal pendulum 	|   3.2606e-02  	| 3.2787e-02 		|
-| Real pendulum 	|   1.9442e-03   	| 9.1546e-03 		|
-| 2 body problem 	|   2.6450e-05  	| 2.8388e-06		|
-| 3 body problem 	|   9.5573e-02  	| 8.0346e-02		|
-| Pixel pendulum 	|   1.6088e-04   	| 1.000e-04 	 	|
+| Ideal mass-spring |  	3.7134e-02 +/- 1.9143e-03 | 3.6933e-02 +/- 1.9128e-03 		|
+| Ideal pendulum 	|   3.2606e-02 +/- 1.7434e-03 | 3.2787e-02 +/- 1.7567e-03 		|
+| Real pendulum 	|   2.7455e-03 +/- 2.0735e-04 | 9.2376e-03 +/- 5.0263e-04 		|
+| 2 body problem 	|   3.2682e-05 +/- 1.2022e-06 | 2.9959e-06 +/- 6.5500e-08		|
+| 3 body problem 	|   9.5573e-02 +/- 6.5610e-02 | 8.0346e-02 +/- 2.1470e-02		|
+| Pixel pendulum 	|   1.7731e-04 +/- 2.4202e-06 | 1.8683e-04 +/- 2.4238e-06 		|
 
 
 ### Test loss
@@ -89,12 +89,12 @@ Do the same thing with test data
 
 |               	| Baseline NN 			| Hamiltonian NN 	|
 | ------------- 	| :-------------------: | :---------------: |
-| Ideal mass-spring |  	3.6656e-02    	  	| **3.5920e-02** 	|
-| Ideal pendulum 	|   3.5273e-02 			| **3.5586e-02** 	|
-| Real pendulum 	|   3.2514e-01   		| **3.2400e-01** 	|
-| 2 body problem 	|   2.9575e-05  	 	| **2.8838e-06** 	|
-| 3 body problem 	|   **3.8000e-01**  	| 4.8809e-01		|
-| Pixel pendulum 	|   **1.8137e-04**   	| 2.1139e-04  		|
+| Ideal mass-spring |  	3.6656e-02 +/- 1.8652e-03 | **3.5928e-02 +/- 1.8328e-03** 	|
+| Ideal pendulum 	|   3.5273e-02 +/- 1.7970e-03 | **3.5586e-02 +/- 1.8178e-03** 	|
+| Real pendulum 	|   2.1864e-03 +/- 3.3296e-04 | **5.9584e-03 +/- 6.1798e-04** 	|
+| 2 body problem 	|   2.9575e-05 +/- 8.8900e-07 | **2.8218e-06 +/- 4.2020e-08** 	|
+| 3 body problem 	|   **3.8000e-01 +/- 4.1612e-01**  	| 4.8809e-01 +/- 4.7745e-01	|
+| Pixel pendulum 	|   **1.7306e-04 +/- 3.2413e-06**   | 1.8451e-04 +/- 3.3422e-06 |
 
 ### Energy MSE
 * Choose a trajectory `[x0, x1,...]` from test data
@@ -103,12 +103,12 @@ Do the same thing with test data
 
 |               	| Baseline NN 			| Hamiltonian NN	|
 | ------------- 	| :-------------------:	| :---------------:	|
-| Ideal mass-spring | 1.7077e-01			| **3.8119e-04** 	|
-| Ideal pendulum 	| 4.1537e-02			| **2.4852e-02** 	|
-| Real pendulum 	| 3.7144e-01			| **1.2468e-02**	|
-| 2 body problem 	| 5.933e-02   			| **3.870e-05** 	|
-| 3 body problem 	| 1.039e+02  			| **3.940e-02**		|
-| Pixel pendulum 	| 9.3855e-03   			| **1.0214e-04** 	|
+| Ideal mass-spring | 1.7077e-01 +/- 2.06e-02  | **3.8416e-04 +/- 6.53e-05** |
+| Ideal pendulum 	| 4.1519e-02 +/- 9.62e-03  | **2.4852e-02 +/- 5.42e-03** |
+| Real pendulum 	| 3.8564e-01 +/- 6.92e-02  | **1.4477e-02 +/- 4.65e-03**	|
+| 2 body problem 	| 6.3276e-02 +/- 3.36e-02  | **3.8751e-05 +/- 5.04e-06** |
+| 3 body problem 	| 1.0906e+02 +/- 7.74e+01  | **4.1926e-02 +/- 3.39e-02**	|
+| Pixel pendulum 	| 9.2748e-03 +/- 1.14e-03  | **1.5315e-04 +/- 8.42e-06** 	|
 
 
 Dependencies
