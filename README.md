@@ -113,13 +113,9 @@ Do the same thing with test data
 
 Dependencies
 --------
-This project is written in Python 3.
  * OpenAI Gym
  * PyTorch
  * NumPy
  * ImageIO
  * Scipy
-
-Known issues
---------
- * None so far \m/
+This project is written in Python 3.
