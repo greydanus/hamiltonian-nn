@@ -118,4 +118,5 @@ Dependencies
  * NumPy
  * ImageIO
  * Scipy
+ 
 This project is written in Python 3.
