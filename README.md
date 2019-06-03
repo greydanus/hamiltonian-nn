@@ -52,11 +52,11 @@ The HNN recipe
 
 5. After integrating in latent space, we can project back into pixel space to simulate the dynamics of the system.
 
-![pendulum-compare-labeled.gif](static/pendulum-compare-labeled.gif)
+![pendulum-compare-labeled.gif](static/pend-compare.gif)
 
 Here's what it looks like when we add energy halfway through the simulation:
 
-![pendulum-compare-labeled.gif](static/pendulum-addenergy-labeled.gif)
+![pendulum-compare-labeled.gif](static/addenergy.gif)
 
 Modeling larger systems
 --------
