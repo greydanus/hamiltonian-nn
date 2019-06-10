@@ -2,6 +2,8 @@ Hamiltonian Neural Networks
 =======
 Sam Greydanus, Misko Dzamba, Jason Yosinski | 2019
 
+[Paper](https://arxiv.org/abs/1906.01563) [Blog post](https://greydanus.github.io/2019/05/15/hamiltonian-nns/)
+
 ![overall-idea.png](static/overall-idea.png)
 
 Basic usage
@@ -26,9 +28,7 @@ To analyze results
 Summary
 --------
 
- Even though neural networks enjoy widespread use, they still struggle to learn the basic laws of physics. How might we endow them with better inductive biases? In this paper, we draw inspiration from Hamiltonian mechanics to train models that learn and respect exact conservation laws in an unsupervised manner. We evaluate our models on problems where conservation of energy is important, including the two-body problem and pixel observations of a pendulum. Our model trains faster and generalizes better than a regular neural network. An interesting side effect is that our model is perfectly reversible in time.
-
- * [Paper](static/hnn-paper.pdf)
+Even though neural networks enjoy widespread use, they still struggle to learn the basic laws of physics. How might we endow them with better inductive biases? In this paper, we draw inspiration from Hamiltonian mechanics to train models that learn and respect exact conservation laws in an unsupervised manner. We evaluate our models on problems where conservation of energy is important, including the two-body problem and pixel observations of a pendulum. Our model trains faster and generalizes better than a regular neural network. An interesting side effect is that our model is perfectly reversible in time.
 
 
 The HNN recipe
