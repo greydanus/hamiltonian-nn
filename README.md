@@ -2,8 +2,8 @@ Hamiltonian Neural Networks
 =======
 Sam Greydanus, Misko Dzamba, Jason Yosinski | 2019
 
-* [arxiv.org/abs/1906.01563](https://arxiv.org/abs/1906.01563)
-* [greydanus.github.io/2019/05/15/hamiltonian-nns/](https://greydanus.github.io/2019/05/15/hamiltonian-nns/)
+* Paper: [arxiv.org/abs/1906.01563](https://arxiv.org/abs/1906.01563)
+* Blog: [greydanus.github.io/2019/05/15/hamiltonian-nns/](https://greydanus.github.io/2019/05/15/hamiltonian-nns/)
 
 ![overall-idea.png](static/overall-idea.png)
 
